@@ -37,11 +37,15 @@ export class CiudadService {
     public async getById(id : number) : Promise<Ciudad[]> {
         try {
             const criterio : FindOneOptions = { where: { idCiudad: id } }
-            this.ciudades.push(await this.ciudadRepository.findOne( criterio ));
+            let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
+            if (ciudad) 
+                this.ciudades.push();
+            else
+                throw new Error('La ciudad no se encuentra.')
             return this.ciudades;
         } catch (error) {
             throw new HttpException( {
-                status : HttpStatus.NOT_FOUND, error : 'Error en la busqueda de ' + id + ' : ' + error 
+                status : HttpStatus.NOT_FOUND, error : 'Error en la busqueda de ciudad ' + id + ' : ' + error 
             }, HttpStatus.NOT_FOUND);
         }
     }
@@ -66,9 +70,9 @@ export class CiudadService {
     public async delete(id : number) : Promise<string> {
         try {
             if (id)
-                if (await this.existeCiudad(id)) 
-                    await this.ciudadRepository.delete(id);
-                else
+                if (await this.existeCiudad(id)) {
+                    await this.ciudadRepository.delete( id );
+                } else
                     throw new Error('La ciudad no se encuentra.')
             else
                 throw new Error('No hay datos para eliminar ciudades');
@@ -81,9 +85,12 @@ export class CiudadService {
         try {
             if (datos)
                 if (datos.idCiudad && datos.nombre) 
-                    if (await this.existeCiudad(datos.idCiudad)) 
-                        await this.ciudadRepository.save(new Ciudad(datos.idCiudad, datos.nombre));
-                    else
+                    if (await this.existeCiudad(datos.idCiudad)) {
+                        let criterio : FindOneOptions = { where: { idCiudad: datos.idCiudad } }
+                        let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
+                        ciudad.setNombre(datos.nombre) 
+                        await this.ciudadRepository.save(ciudad);
+                    } else
                         throw new Error('La ciudad no se encuentra.')                    
                 else
                     throw new Error('Los datos para modificar ciudad no son validos');
@@ -96,7 +103,7 @@ export class CiudadService {
     }
 /////
     private async existeCiudad(id : number) : Promise<boolean> {
-        const criterio : FindOneOptions = { where: { idCiudad: id } }
+        let criterio : FindOneOptions = { where: { idCiudad: id } };
         let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
         return (ciudad != null);
     }

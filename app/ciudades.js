@@ -50,7 +50,11 @@ function mostrarCiudades() {
     let btnBorrar = document.querySelectorAll('.btnDelCiudad');
     btnBorrar.forEach(bd => { bd.addEventListener('click', async () => {
         let codigo = bd.getAttribute('codigo');
-        if (await aServidor(codigo,'D')) {
+        let renglon = {
+            "idCiudad" : codigo,
+            "nombre" : document.querySelector(`#nom${codigo}`).value
+        };
+        if (await aServidor(renglon,'D')) {
             load();
         }    
     })})
@@ -99,7 +103,7 @@ async function aServidor(datos, accion) {
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
+            respuesta = await fetch(`/ciudad`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)

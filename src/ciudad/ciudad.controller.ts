@@ -26,7 +26,7 @@ export class CiudadController {
     private eliminar(@Param('id') id : number) : Ciudad[] | any {
         return this.ciudadService.delete(id);        
     }
-    @Put(':id')
+    @Put()
     private actualizar(@Body() datos : any) : Ciudad[] | any {
         return this.ciudadService.update(datos)
     }
