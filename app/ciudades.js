@@ -10,14 +10,10 @@ btnAgregar.addEventListener("click", async () => {
     let codigo = document.querySelector('#codigo').value;
     let nombre = document.querySelector('#nombre').value;
     let renglon = {
-        "cantidad" : 1,
-        "ciudades" : [
-            {
-                "codigo" : codigo,
-                "nombre" : nombre
-            }
-        ]
+        "idCiudad" : codigo,
+        "nombre" : nombre
     };
+    console.log(renglon);
     if (await aServidor(renglon,'A')) {
         load();
     }
@@ -62,15 +58,9 @@ function mostrarCiudades() {
     btnModificar.forEach(bd => { bd.addEventListener('click', async () => {
         let codigo = bd.getAttribute('codigo');
         let renglon = {
-            "cantidad" : 1,
-            "ciudades" : [
-                {
-                    "codigo" : codigo,
-                    "nombre" : document.querySelector(`#nom${codigo}`).value
-                }
-            ]
-        }
-        console.log(renglon);
+            "idCiudad" : codigo,
+            "nombre" : document.querySelector(`#nom${codigo}`).value
+        };
         if (await aServidor(renglon,'U')) {
             load();
         }    
@@ -86,10 +76,7 @@ async function load(codigo) {
         url = '/ciudad';            
     let respuesta = await fetch(url);
     if (respuesta.ok) {
-        if (codigo) 
-            ciudades.push(await respuesta.json());
-        else
-            ciudades = await respuesta.json();
+        ciudades = await respuesta.json();
     }
     mostrarCiudades()
 }
@@ -106,13 +93,13 @@ async function aServidor(datos, accion) {
             break;
         } 
         case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${codigo}`, {
+            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
                 method : 'DELETE'
             });   
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad/${datos.ciudades[0].codigo}`, {
+            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)
