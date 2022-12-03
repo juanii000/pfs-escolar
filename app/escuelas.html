@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Sistema Escolar - Escuelas</title>
+</head>
+<body>
+    <h1>Sistema Escolar - Escuelas</h1>
+    <table> 
+      <thead>
+        <td colspan="5">
+          <button type="button" id="btnRegresar">Regresar</button>
+        </td> 
+      </thead>
+      <thead>
+          <td>Codigo</td>
+          <td>Nombre</td>
+          <td>Domicilio</td>
+          <td>Ciudad</td>
+          <td></td>
+        </thead>
+        <thead>
+          <td><input class="vacio" type="text" name="" value="" id="codigo"></td>
+          <td><input class="vacio" type="text" name="" value="" id="nombre"></td>
+          <td><input class="vacio" type="text" name="" value="" id="domicilio"></td>
+          <td><input class="vacio" type="text" name="" value="" id="ciudad"></td>
+          <td></td>
+        </thead>
+        <thead>
+          <td colspan="5">
+            <button type="button" id="btnAgregar">Agregar</button>
+            <button type="button" id="btnBuscar">Buscar</button>
+          </td> 
+        </thead>
+        <tbody id="tblEscuelas"></tbody>
+    </table>
+    <script src="escuelas.js"></script>
+</body>
+</html>

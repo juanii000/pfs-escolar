@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+    <title>Sistema Escolar - Estudiantes</title>
+</head>
+<body>
+    <h1>Sistema Escolar - Estudiantes</h1>
+    <table> 
+      <thead>
+        <td colspan="4">
+          <button type="button" id="btnRegresar">Regresar</button>
+        </td> 
+      </thead>
+      <thead>
+          <td>Codigo</td>
+          <td>Nombre</td>
+          <td>Fecha Nacimiento</td>
+          <td></td>
+        </thead>
+        <thead>
+          <td><input class="vacio" type="text" name="" value="" id="codigo"></td>
+          <td><input class="vacio" type="text" name="" value="" id="apellidoNombres"></td>
+          <td><input class="vacio" type="text" name="" value="" id="fechaNacimiento"></td>
+          <td></td>
+        </thead>
+        <thead>
+          <td colspan="4">
+            <button type="button" id="btnAgregar">Agregar</button>
+            <button type="button" id="btnBuscar">Buscar</button>
+          </td> 
+        </thead>
+        <tbody id="tblEstudiantes"></tbody>
+    </table>
+    <script src="estudiantes.js"></script>
+</body>
+</html>

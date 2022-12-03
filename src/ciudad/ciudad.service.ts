@@ -38,8 +38,9 @@ export class CiudadService {
         try {
             const criterio : FindOneOptions = { where: { idCiudad: id } }
             let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
+            this.ciudades = [];
             if (ciudad) 
-                this.ciudades.push();
+                this.ciudades.push(ciudad);
             else
                 throw new Error('La ciudad no se encuentra.')
             return this.ciudades;
@@ -88,7 +89,7 @@ export class CiudadService {
                     if (await this.existeCiudad(datos.idCiudad)) {
                         let criterio : FindOneOptions = { where: { idCiudad: datos.idCiudad } }
                         let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
-                        ciudad.setNombre(datos.nombre) 
+                        ciudad.setNombre(datos.nombre); 
                         await this.ciudadRepository.save(ciudad);
                     } else
                         throw new Error('La ciudad no se encuentra.')                    

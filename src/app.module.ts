@@ -5,6 +5,11 @@ import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CiudadModule } from './ciudad/ciudad.module';
+import { EstudianteModule } from './estudiante/estudiante.module';
+import { ProfesorModule } from './profesor/profesor.module';
+import { EscuelaModule } from './escuela/escuela.module';
+import { ClaseModule } from './clase/clase.module';
+import { AsistenciaModule } from './asistencia/asistencia.module';
 
 @Module({
   imports: [
@@ -22,6 +27,11 @@ import { CiudadModule } from './ciudad/ciudad.module';
       synchronize: false,
     }),
     CiudadModule,
+    EstudianteModule,
+    ProfesorModule,
+    EscuelaModule,
+    ClaseModule,
+    AsistenciaModule,
   ],
   controllers: [AppController],
   providers: [AppService],

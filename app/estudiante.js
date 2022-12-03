@@ -10,7 +10,7 @@ function procesarParametros() {
 }
 
 document.querySelector("#btnRegresar").addEventListener("click", () => {
-    window.location='./ciudades.html';
+    window.location='./estudiantes.html';
 });
 
 load();
@@ -18,38 +18,40 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        ciudades = [];
+        estudiantes = [];
         procesarParametros();
-        let url = `/ciudad/${parametros['idCiudad']}`;
+        let url = `/estudiante/${parametros['idEstudiante']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
-            let ciudad = await respuesta.json();
-            // document.querySelector('#idCiudad').value = ciudad['idCiudad'];
-            document.querySelector("#pTitulo").innerHTML = `Ciudad - ${ciudad[0]['idCiudad']}`;
-            document.querySelector('#nombre').value = ciudad[0]['nombre'];
+            let estudiante = await respuesta.json();
+            // document.querySelector('#idEstudiante').value = estudiante['idEstudiante'];
+            document.querySelector("#pTitulo").innerHTML = `Estudiante - ${estudiante[0]['idEstudiante']}`;
+            document.querySelector('#apellidoNombres').value = estudiante[0]['apellidoNombres'];
+            document.querySelector('#fechaNacimiento').value = estudiante[0]['fechaNacimiento'].substr(0,10);
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelCiudad" idCiudad="${ciudad[0]['idCiudad']}">Borrar</button>
-            <button class="btnUpdCiudad" idCiudad="${ciudad[0]['idCiudad']}">Actualizar</button>
+            <button class="btnDelEstudiante" idEstudiante="${estudiante[0]['idEstudiante']}">Borrar</button>
+            <button class="btnUpdEstudiante" idEstudiante="${estudiante[0]['idEstudiante']}">Actualizar</button>
             `;
-            let btnBorrar = document.querySelector('.btnDelCiudad');
+            let btnBorrar = document.querySelector('.btnDelEstudiante');
             btnBorrar.addEventListener('click', async () => {
-                let idCiudad = this.getAttribute('idCiudad');
-                if (await aServidor(idCiudad,'D')) {
+                let idEstudiante = this.getAttribute('idEstudiante');
+                if (await aServidor(idEstudiante,'D')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./estudiantes.html">Regresar</a>
                     `;
                 }    
             });
-            let btnModificar = document.querySelector('.btnUpdCiudad');
+            let btnModificar = document.querySelector('.btnUpdEstudiante');
             btnModificar.addEventListener('click', async () => {
-                let idCiudad = btnModificar.attributes['idCiudad'].value;
+                let idEstudiante = btnModificar.attributes['idEstudiante'].value;
                 let renglon = {
-                    "idCiudad" : idCiudad,
-                    "nombre" : document.querySelector('#nombre').value,
+                    "idEstudiante" : idEstudiante,
+                    "apellidoNombres" : document.querySelector('#apellidoNombres').value,
+                    "fechaNacimiento" : document.querySelector('#fechaNacimiento').value
                 }        
                 if (await aServidor(renglon,'U')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./estudiantes.html">Regresar</a>
                     `;
                 }    
             });
@@ -65,13 +67,13 @@ async function aServidor(datos, accion) {
     let respuesta;
     switch (accion) {
         case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${datos}`, {
+            respuesta = await fetch(`/estudiante/${datos}`, {
                 method : 'DELETE'
             });   
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
+            respuesta = await fetch(`/estudiante/${datos.idEstudiante}`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)

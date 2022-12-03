@@ -10,7 +10,7 @@ function procesarParametros() {
 }
 
 document.querySelector("#btnRegresar").addEventListener("click", () => {
-    window.location='./ciudades.html';
+    window.location='./profesores.html';
 });
 
 load();
@@ -18,38 +18,38 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        ciudades = [];
+        profesores = [];
         procesarParametros();
-        let url = `/ciudad/${parametros['idCiudad']}`;
+        let url = `/profesor/${parametros['idProfesor']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
-            let ciudad = await respuesta.json();
-            // document.querySelector('#idCiudad').value = ciudad['idCiudad'];
-            document.querySelector("#pTitulo").innerHTML = `Ciudad - ${ciudad[0]['idCiudad']}`;
-            document.querySelector('#nombre').value = ciudad[0]['nombre'];
+            let profesor = await respuesta.json();
+            // document.querySelector('#idProfesor').value = profesor['idProfesor'];
+            document.querySelector("#pTitulo").innerHTML = `Profesor - ${profesor[0]['idProfesor']}`;
+            document.querySelector('#apellidoNombres').value = profesor[0]['apellidoNombres'];
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelCiudad" idCiudad="${ciudad[0]['idCiudad']}">Borrar</button>
-            <button class="btnUpdCiudad" idCiudad="${ciudad[0]['idCiudad']}">Actualizar</button>
+            <button class="btnDelProfesor" idProfesor="${profesor[0]['idProfesor']}">Borrar</button>
+            <button class="btnUpdProfesor" idProfesor="${profesor[0]['idProfesor']}">Actualizar</button>
             `;
-            let btnBorrar = document.querySelector('.btnDelCiudad');
+            let btnBorrar = document.querySelector('.btnDelProfesor');
             btnBorrar.addEventListener('click', async () => {
-                let idCiudad = this.getAttribute('idCiudad');
-                if (await aServidor(idCiudad,'D')) {
+                let idProfesor = this.getAttribute('idProfesor');
+                if (await aServidor(idProfesor,'D')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./profesores.html">Regresar</a>
                     `;
                 }    
             });
-            let btnModificar = document.querySelector('.btnUpdCiudad');
+            let btnModificar = document.querySelector('.btnUpdProfesor');
             btnModificar.addEventListener('click', async () => {
-                let idCiudad = btnModificar.attributes['idCiudad'].value;
+                let idProfesor = btnModificar.attributes['idProfesor'].value;
                 let renglon = {
-                    "idCiudad" : idCiudad,
-                    "nombre" : document.querySelector('#nombre').value,
+                    "idProfesor" : idProfesor,
+                    "apellidoNombres" : document.querySelector('#apellidoNombres').value,
                 }        
                 if (await aServidor(renglon,'U')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./profesores.html">Regresar</a>
                     `;
                 }    
             });
@@ -65,13 +65,13 @@ async function aServidor(datos, accion) {
     let respuesta;
     switch (accion) {
         case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${datos}`, {
+            respuesta = await fetch(`/profesor/${datos}`, {
                 method : 'DELETE'
             });   
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
+            respuesta = await fetch(`/profesor/${datos.idProfesor}`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)

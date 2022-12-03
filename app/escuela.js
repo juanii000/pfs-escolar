@@ -10,7 +10,7 @@ function procesarParametros() {
 }
 
 document.querySelector("#btnRegresar").addEventListener("click", () => {
-    window.location='./ciudades.html';
+    window.location='./escuelas.html';
 });
 
 load();
@@ -18,38 +18,42 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        ciudades = [];
+        escuelas = [];
         procesarParametros();
-        let url = `/ciudad/${parametros['idCiudad']}`;
+        let url = `/escuela/${parametros['idEscuela']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
-            let ciudad = await respuesta.json();
-            // document.querySelector('#idCiudad').value = ciudad['idCiudad'];
-            document.querySelector("#pTitulo").innerHTML = `Ciudad - ${ciudad[0]['idCiudad']}`;
-            document.querySelector('#nombre').value = ciudad[0]['nombre'];
+            let escuela = await respuesta.json();
+            // document.querySelector('#idEscuela').value = escuela['idEscuela'];
+            document.querySelector("#pTitulo").innerHTML = `Escuela - ${escuela[0]['idEscuela']}`;
+            document.querySelector('#nombre').value = escuela[0]['nombre'];
+            document.querySelector('#domicilio').value = escuela[0]['domicilio'];
+            document.querySelector('#ciudad').value = escuela[0]['idCiudad'];
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelCiudad" idCiudad="${ciudad[0]['idCiudad']}">Borrar</button>
-            <button class="btnUpdCiudad" idCiudad="${ciudad[0]['idCiudad']}">Actualizar</button>
+            <button class="btnDelEscuela" idEscuela="${escuela[0]['idEscuela']}">Borrar</button>
+            <button class="btnUpdEscuela" idEscuela="${escuela[0]['idEscuela']}">Actualizar</button>
             `;
-            let btnBorrar = document.querySelector('.btnDelCiudad');
+            let btnBorrar = document.querySelector('.btnDelEscuela');
             btnBorrar.addEventListener('click', async () => {
-                let idCiudad = this.getAttribute('idCiudad');
-                if (await aServidor(idCiudad,'D')) {
+                let idEscuela = this.getAttribute('idEscuela');
+                if (await aServidor(idEscuela,'D')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./escuelas.html">Regresar</a>
                     `;
                 }    
             });
-            let btnModificar = document.querySelector('.btnUpdCiudad');
+            let btnModificar = document.querySelector('.btnUpdEscuela');
             btnModificar.addEventListener('click', async () => {
-                let idCiudad = btnModificar.attributes['idCiudad'].value;
+                let idEscuela = btnModificar.attributes['idEscuela'].value;
                 let renglon = {
-                    "idCiudad" : idCiudad,
+                    "idEscuela" : idEscuela,
                     "nombre" : document.querySelector('#nombre').value,
+                    "domicilio" : document.querySelector('#domicilio').value,
+                    "idCiudad" : document.querySelector('#idCiudad').value
                 }        
                 if (await aServidor(renglon,'U')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./ciudades.html">Regresar</a>
+                <a href="./escuelas.html">Regresar</a>
                     `;
                 }    
             });
@@ -65,13 +69,13 @@ async function aServidor(datos, accion) {
     let respuesta;
     switch (accion) {
         case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${datos}`, {
+            respuesta = await fetch(`/escuela/${datos}`, {
                 method : 'DELETE'
             });   
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
+            respuesta = await fetch(`/escuela/${datos.idEscuela}`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)
