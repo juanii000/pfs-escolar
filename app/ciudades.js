@@ -39,7 +39,7 @@ function mostrarCiudades() {
         html += `
             <tr>
             <td><a href="./ciudad.html?idCiudad=${r.idCiudad}">${r.idCiudad}</a></td>
-            <td><input class="vacio" type="text" name="" value="${r.nombre}" id="nom${r.idCiudad}"></td>
+            <td><input class="vacio texto" type="text" name="" value="${r.nombre}" id="nom${r.idCiudad}"></td>
             <td><button class="btnDelCiudad" codigo="${r.idCiudad}">Borrar</button>
                 <button class="btnUpdCiudad" codigo="${r.idCiudad}">Actualizar</button>
             </td>

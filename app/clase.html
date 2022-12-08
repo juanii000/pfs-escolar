@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <title>Sistema Escolar - Escuelas</title>
+    <title>Sistema Escolar - Clases</title>
   </head>
   <body>
-    <h1>Sistema Escolar - Escuelas</h1>
-    <h3 id="pTitulo">Escuela</h3>
+    <h1>Sistema Escolar - Clases</h1>
+    <h3 id="pTitulo">Clase</h3>
     <button type="button" id="btnRegresar">Regresar</button>
     <div id="dContenido">
       <table>
@@ -18,16 +18,16 @@
           <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
         </tr>
         <tr>
-          <td>Domicilio</td>
-          <td><input class="vacio texto" type="text" name="" value="" id="domicilio"></td>
+          <td>Escuela</td>
+          <td id="selEscuela"><input class="vacio" type="text" name="" value="" id="escuela"></td>
         </tr>
         <tr>
-          <td>Ciudad</td>
-          <td id="selCiudad"><input class="vacio" type="text" name="" value="" id="ciudad"></td>
+          <td>Profesor</td>
+          <td id="selProfesor"><input class="vacio" type="text" name="" value="" id="profesor"></td>
         </tr>
       </table>
       <p id="acciones"></p>      
     </div>
-    <script src="escuela.js"></script>
+    <script src="clase.js"></script>
   </body>  
 </html>

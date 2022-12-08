@@ -73,7 +73,7 @@ async function aServidor(datos, accion) {
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/estudiante/${datos.idEstudiante}`, {
+            respuesta = await fetch(`/estudiante`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)

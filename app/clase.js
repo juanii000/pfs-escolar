@@ -10,7 +10,7 @@ function procesarParametros() {
 }
 
 document.querySelector("#btnRegresar").addEventListener("click", () => {
-    window.location='./escuelas.html';
+    window.location='./clases.html';
 });
 
 load();
@@ -18,40 +18,40 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        escuelas = [];
+        clases = [];
         procesarParametros();
-        let url = `/escuela/${parametros['idEscuela']}`;
+        let url = `/clase/${parametros['idClase']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
-            let escuela = await respuesta.json();
-            document.querySelector("#pTitulo").innerHTML = `Escuela - ${escuela[0]['idEscuela']}`;
-            document.querySelector('#nombre').value = escuela[0]['nombre'];
-            document.querySelector('#domicilio').value = escuela[0]['domicilio'];
-            armarReferencia("#selCiudad", "ciudad", 'idCiudad', 'idCiudad', 'nombre', escuela[0]['idCiudad']);
-            // document.querySelector('#ciudad').value = escuela[0]['idCiudad'];
+            let clase = await respuesta.json();
+            document.querySelector("#pTitulo").innerHTML = `Clase - ${clase[0]['idClase']}`;
+            document.querySelector('#nombre').value = clase[0]['nombre'];
+            armarReferencia("#selEscuela","escuela", 'idEscuela', 'idEscuela', 'nombre', clase[0]['idEscuela']);
+            armarReferencia("#selProfesor","profesor", 'idProfesor', 'idProfesor', 'apellidoNombres', clase[0]['idProfesor']);
+            // document.querySelector('#escuela').value = clase[0]['idEscuela'];
+            // document.querySelector('#profesor').value = clase[0]['idProfesor'];
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelEscuela" idEscuela="${escuela[0]['idEscuela']}">Borrar</button>
-            <button class="btnUpdEscuela" idEscuela="${escuela[0]['idEscuela']}">Actualizar</button>
+            <button class="btnDelClase" idClase="${clase[0]['idClase']}">Borrar</button>
+            <button class="btnUpdClase" idClase="${clase[0]['idClase']}">Actualizar</button>
             `;
-            let btnBorrar = document.querySelector('.btnDelEscuela');
+            let btnBorrar = document.querySelector('.btnDelClase');
             btnBorrar.addEventListener('click', async () => {
-                let idEscuela = this.getAttribute('idEscuela');
-                if (await aServidor(idEscuela,'D')) {
+                let idClase = this.getAttribute('idClase');
+                if (await aServidor(idClase, null,'D')) {
                     document.querySelector('#acciones').innerHTML=`
-                <a href="./escuelas.html">Regresar</a>
+                <a href="./clases.html">Regresar</a>
                     `;
                 }    
             });
-            let btnModificar = document.querySelector('.btnUpdEscuela');
+            let btnModificar = document.querySelector('.btnUpdClase');
             btnModificar.addEventListener('click', async () => {
-                let idEscuela = btnModificar.attributes['idEscuela'].value;
+                let idClase = btnModificar.attributes['idClase'].value;
                 let renglon = {
-                    "idEscuela" : idEscuela,
                     "nombre" : document.querySelector('#nombre').value,
-                    "domicilio" : document.querySelector('#domicilio').value,
-                    "idCiudad" : document.querySelector('#idCiudad').value
+                    "idEscuela" : document.querySelector('#idEscuela').value,
+                    "idProfesor" : document.querySelector('#idProfesor').value
                 }        
-                if (await aServidor(renglon,'U')) {
+                if (await aServidor(idClase, renglon,'U')) {
                     document.querySelector('#acciones').innerHTML="";
                 }    
             });
@@ -63,17 +63,17 @@ async function load() {
     }
 }
 
-async function aServidor(datos, accion) {
+async function aServidor(id, datos, accion) {
     let respuesta;
     switch (accion) {
         case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/escuela/${datos}`, {
+            respuesta = await fetch(`/clase/${id}`, {
                 method : 'DELETE'
             });   
             break;         
         }
         case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/escuela`, {
+            respuesta = await fetch(`/clase/${id}`, {
                 method : 'PUT',
                 headers : { 'Content-type' : 'application/json' },
                 body : JSON.stringify(datos)

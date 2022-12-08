@@ -42,8 +42,8 @@ function mostrarEstudiantes() {
         html += `
             <tr>
             <td><a href="./estudiante.html?idEstudiante=${r.idEstudiante}">${r.idEstudiante}</a></td>
-            <td><input class="vacio" type="text" name="" value="${r.apellidoNombres}" id="nom${r.idEstudiante}"></td>
-            <td><input class="vacio" type="text" name="" value="${r.fechaNacimiento.substr(0,10)}" id="fna${r.idEstudiante}"></td>
+            <td><input class="vacio texto" type="text" name="" value="${r.apellidoNombres}" id="nom${r.idEstudiante}"></td>
+            <td><input class="vacio fecha" type="date" name="" value="${r.fechaNacimiento.substr(0,10)}" id="fna${r.idEstudiante}"></td>
             <td><button class="btnDelEstudiante" codigo="${r.idEstudiante}">Borrar</button>
                 <button class="btnUpdEstudiante" codigo="${r.idEstudiante}">Actualizar</button>
             </td>

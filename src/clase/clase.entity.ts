@@ -1,8 +1,8 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 @Entity('clases')
 export class Clase {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     private idClase : number;
     @Column()
     private nombre : string;
@@ -11,19 +11,17 @@ export class Clase {
     @Column()
     private idProfesor : number;
 
-    constructor (idClase : number, nombre : string, idEscuela : number, idProfesor : number) {
-        this.idClase = idClase;
+    constructor (nombre : string, idEscuela : number, idProfesor : number) {
         this.nombre = nombre;
         this.idEscuela = idEscuela;
         this.idProfesor = idProfesor;
     }
 
     public getIdClase(): number { return this.idClase; }
-    public setIdClase(idClase: number): void { this.idClase = idClase; }
     public getNombre(): string { return this.nombre; }
     public setNombre(nombre: string): void { this.nombre = nombre; }
     public getIdEscuela(): number { return this.idEscuela; }
     public setIdEscuela(idEscuela: number): void { this.idEscuela = idEscuela; }
-    public getIdProfesor(): string { return this.nombre; }
+    public getIdProfesor(): number { return this.idProfesor; }
     public setIdProfesor(idProfesor: number): void { this.idProfesor = idProfesor; }
 }

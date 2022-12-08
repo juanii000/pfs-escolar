@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { CiudadDTO } from './ciudad.dto';
 import { Ciudad } from './ciudad.entity';
 import { CiudadService } from './ciudad.service';
 
@@ -19,7 +20,7 @@ export class CiudadController {
         return this.ciudadService.getAll();
     }
     @Post()    
-    private agregar(@Body() datos : any) : Ciudad[] | any {
+    private agregar(@Body() datos : CiudadDTO) : Ciudad[] | any {
         return this.ciudadService.add(datos);
     }
     @Delete(':id')
@@ -27,7 +28,7 @@ export class CiudadController {
         return this.ciudadService.delete(id);        
     }
     @Put()
-    private actualizar(@Body() datos : any) : Ciudad[] | any {
+    private actualizar(@Body() datos : CiudadDTO) : Ciudad[] | any {
         return this.ciudadService.update(datos)
     }
 }

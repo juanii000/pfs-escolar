@@ -6,7 +6,7 @@ import { CiudadService } from './ciudad.service';
 
 @Module({
   imports : [ 
-    TypeOrmModule.forFeature([ Ciudad  ])
+    TypeOrmModule.forFeature([ Ciudad ])
   ],
   controllers: [CiudadController],
   providers: [CiudadService]

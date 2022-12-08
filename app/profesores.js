@@ -39,7 +39,7 @@ function mostrarProfesores() {
         html += `
             <tr>
             <td><a href="./profesor.html?idProfesor=${r.idProfesor}">${r.idProfesor}</a></td>
-            <td><input class="vacio" type="text" name="" value="${r.apellidoNombres}" id="nom${r.idProfesor}"></td>
+            <td><input class="vacio texto" type="text" name="" value="${r.apellidoNombres}" id="nom${r.idProfesor}"></td>
             <td><button class="btnDelProfesor" codigo="${r.idProfesor}">Borrar</button>
                 <button class="btnUpdProfesor" codigo="${r.idProfesor}">Actualizar</button>
             </td>
