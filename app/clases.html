@@ -11,7 +11,7 @@
     <h1>Sistema Escolar - Clases</h1>
     <table> 
       <thead>
-        <td colspan="5">
+        <td colspan="6">
           <button type="button" id="btnRegresar">Regresar</button>
         </td> 
       </thead>
@@ -20,23 +20,29 @@
           <td>Nombre</td>
           <td>Escuela</td>
           <td>Profesor</td>
-          <td></td>
+          <td colspan="2"></td>
         </thead>
         <thead>
           <td><input class="vacio codigo bloqueado" type="text" name="" value="" id="codigo" disabled></td>
           <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
           <td id="selEscuela"><input class="vacio" type="text" name="" value="" id="escuela"></td>
           <td id="selProfesor"><input class="vacio" type="text" name="" value="" id="profesor"></td>
+          <td><button type="button" id="btnAgrEstudiantes">+ Estudiantes</button></td>
           <td></td>
         </thead>
         <thead>
-          <td colspan="5">
+          <td></td>
+          <td colspan="2" id="tblEstudiantesClase"></td>
+          <td colspan="3"></td>
+        </thead>
+        <thead>
+          <td colspan="6">
             <button type="button" id="btnAgregar">Agregar</button>
             <button type="button" id="btnBuscar">Buscar</button>
           </td> 
         </thead>
         <tbody id="tblClases"></tbody>
     </table>
-    <script src="clases.js"></script>
+    <script type="module" src="clases.js"></script>
 </body>
 </html>

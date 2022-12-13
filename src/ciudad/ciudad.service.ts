@@ -8,8 +8,7 @@ import { Ciudad } from './ciudad.entity';
 export class CiudadService {
     private ciudades : Ciudad[] = [];
     
-    constructor (@InjectRepository(Ciudad)
-    private readonly ciudadRepository : Repository<Ciudad>) {}
+    constructor (@InjectRepository(Ciudad) private readonly ciudadRepository : Repository<Ciudad>) {}
  
     public async getAllRaw() : Promise<Ciudad[]> {
         try {
@@ -40,7 +39,7 @@ export class CiudadService {
     }
     public async getById(id : number) : Promise<Ciudad[]> {
         try {
-            const criterio : FindOneOptions = { where: { idCiudad: id } }
+            const criterio : FindOneOptions = { relations: [ 'escuelas' ], where: { idCiudad: id } }
             let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
             this.ciudades = [];
             if (ciudad) 

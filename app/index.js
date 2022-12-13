@@ -1,15 +1,27 @@
 document.querySelector("#btnCiudades").addEventListener("click", () => {
-    window.location='./ciudades.html';
+    if (window.sessionStorage.getItem("loginOk")) window.location='./ciudades.html';
 });
 document.querySelector("#btnEscuelas").addEventListener("click", () => {
-    window.location='./escuelas.html';
+    if (window.sessionStorage.getItem("loginOk")) window.location='./escuelas.html';
 });
 document.querySelector("#btnProfesores").addEventListener("click", () => {
-    window.location='./profesores.html';
+    if (window.sessionStorage.getItem("loginOk")) window.location='./profesores.html';
 });
 document.querySelector("#btnEstudiantes").addEventListener("click", () => {
-    window.location='./estudiantes.html';
+    if (window.sessionStorage.getItem("loginOk")) window.location='./estudiantes.html';
 });
 document.querySelector("#btnClases").addEventListener("click", () => {
-    window.location='./clases.html';
+    if (window.sessionStorage.getItem("loginOk")) window.location='./clases.html';
 });
+
+document.querySelector("#btnSalir").addEventListener("click", () => {
+    window.sessionStorage.setItem('loginOk', false);
+    window.sessionStorage.setItem('ingreso', '');
+    window.location.href = './login.html';
+});
+
+if (window.sessionStorage.getItem("loginOk")) {
+    document.querySelector("#frmSalir").classList.toggle("oculto");
+} else {
+    window.location.href = "./login.html";
+} 

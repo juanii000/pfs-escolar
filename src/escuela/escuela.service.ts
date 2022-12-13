@@ -1,14 +1,13 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { Escuela } from './escuela.entity';
 
 @Injectable()
 export class EscuelaService {
     private escuelas : Escuela[] = [];
     
-    constructor (@InjectRepository(Escuela)
-    private readonly escuelaRepository : Repository<Escuela>) {}
+    constructor (@InjectRepository(Escuela) private readonly escuelaRepository : Repository<Escuela>) {}
  
     public async getAllRaw() : Promise<Escuela[]> {
         try {
@@ -26,7 +25,8 @@ export class EscuelaService {
     }
     public async getAll() : Promise<Escuela[]> {
         try {
-            this.escuelas = await this.escuelaRepository.find();        
+            const criterio : FindManyOptions = { relations: [ 'ciudad' ] }
+            this.escuelas = await this.escuelaRepository.find( criterio );        
             return this.escuelas;
         } catch (error) {
             throw new HttpException( {
@@ -36,7 +36,7 @@ export class EscuelaService {
     }
     public async getById(id : number) : Promise<Escuela[]> {
         try {
-            const criterio : FindOneOptions = { where: { idEscuela: id } }
+            const criterio : FindOneOptions = { relations: [ 'ciudad', 'clases' ], where: { idEscuela: id } }
             let escuela : Escuela = await this.escuelaRepository.findOne( criterio );
             this.escuelas = [];
             if (escuela) 
@@ -53,11 +53,11 @@ export class EscuelaService {
     public async add(datos : any) : Promise<string> {
         try {
             if (datos)
-                if (datos.idEscuela && datos.nombre && datos.domicilio && datos.idCiudad) 
+                if (datos.idEscuela && datos.nombre && datos.domicilio && datos.ciudad) 
                     if (await this.existeEscuela(datos.idEscuela)) {
                         throw new Error('La escuela ya se encuentra.')
                     } else {
-                        await this.escuelaRepository.save(new Escuela(datos.idEscuela, datos.nombre, datos.domicilio, datos.idCiudad));
+                        await this.escuelaRepository.save(new Escuela(datos.idEscuela, datos.nombre, datos.domicilio, datos.ciudad));
                     }
                 else
                     throw new Error('Los datos para crear escuela no son validos');
@@ -82,16 +82,16 @@ export class EscuelaService {
                 return error.message;            
         }
     }
-    public async update(datos : any) : Promise<string> {
+    public async update(id : number, datos : any) : Promise<string> {
         try {
             if (datos)
-                if (datos.idEscuela && datos.nombre && datos.domicilio && datos.idCiudad) 
-                    if (await this.existeEscuela(datos.idEscuela)) {
-                        let criterio : FindOneOptions = { where: { idEscuela: datos.idEscuela } }
+                if (datos.idEscuela && datos.nombre && datos.domicilio && datos.ciudad) 
+                    if (await this.existeEscuela(id)) {
+                        let criterio : FindOneOptions = { where: { idEscuela: id } }
                         let escuela : Escuela = await this.escuelaRepository.findOne( criterio );
                         escuela.setNombre(datos.nombre);
                         escuela.setDomicilio(datos.domicilio);
-                        escuela.setIdCiudad(datos.idCiudad);
+                        escuela.setCiudad(datos.ciudad);
                         await this.escuelaRepository.save(escuela);
                     } else
                         throw new Error('La escuela no se encuentra.')                    

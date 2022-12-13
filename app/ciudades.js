@@ -1,3 +1,5 @@
+import { aServidor } from "./funciones.js";
+
 let btnAgregar = document.querySelector("#btnAgregar");
 let btnBuscar = document.querySelector("#btnBuscar");
 let btnRegresar = document.querySelector("#btnRegresar");
@@ -14,7 +16,7 @@ btnAgregar.addEventListener("click", async () => {
         "nombre" : nombre
     };
     console.log(renglon);
-    if (await aServidor(renglon,'A')) {
+    if (await aServidor('ciudad', null, renglon, 'A')) {
         load();
     }
     document.querySelector('#codigo').value="";
@@ -54,7 +56,7 @@ function mostrarCiudades() {
             "idCiudad" : codigo,
             "nombre" : document.querySelector(`#nom${codigo}`).value
         };
-        if (await aServidor(renglon,'D')) {
+        if (await aServidor('ciudad', codigo, renglon, 'D')) {
             load();
         }    
     })})
@@ -65,7 +67,7 @@ function mostrarCiudades() {
             "idCiudad" : codigo,
             "nombre" : document.querySelector(`#nom${codigo}`).value
         };
-        if (await aServidor(renglon,'U')) {
+        if (await aServidor('ciudad', codigo, renglon, 'U')) {
             load();
         }    
     })})
@@ -83,33 +85,4 @@ async function load(codigo) {
         ciudades = await respuesta.json();
     }
     mostrarCiudades()
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'A': {     //ALTA
-            respuesta = await fetch('/ciudad', {
-                method :'POST',
-                headers: { 'Content-Type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        } 
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${datos.idCiudad}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
 }

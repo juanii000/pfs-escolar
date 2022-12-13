@@ -10,6 +10,7 @@ import { ProfesorModule } from './profesor/profesor.module';
 import { EscuelaModule } from './escuela/escuela.module';
 import { ClaseModule } from './clase/clase.module';
 import { AsistenciaModule } from './asistencia/asistencia.module';
+import { LoginModule } from './login/login.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AsistenciaModule } from './asistencia/asistencia.module';
     EscuelaModule,
     ClaseModule,
     AsistenciaModule,
+    LoginModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -33,3 +33,6 @@ input.texto {
 input.bloqueado {
     background-color: lightgray;    
 }
+div.oculto {
+    visibility: hidden;
+}

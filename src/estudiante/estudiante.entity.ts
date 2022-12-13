@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Clase } from "src/clase/clase.entity";
+import { Entity, PrimaryColumn, Column, JoinTable, ManyToMany } from "typeorm";
 
 @Entity('estudiantes')
 export class Estudiante {

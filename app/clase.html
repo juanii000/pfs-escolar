@@ -13,21 +13,28 @@
     <button type="button" id="btnRegresar">Regresar</button>
     <div id="dContenido">
       <table>
-        <tr>
+        <thead>
+          <td>Codigo</td>
           <td>Nombre</td>
-          <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
-        </tr>
-        <tr>
           <td>Escuela</td>
+          <td>Profesor</td>
+        </thead>
+        <tr>
+          <td><input class="vacio codigo bloqueado" type="text" name="" value="" id="codigo" disabled></td>
+          <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
           <td id="selEscuela"><input class="vacio" type="text" name="" value="" id="escuela"></td>
+          <td id="selProfesor"><input class="vacio" type="text" name="" value="" id="profesor"></td>
         </tr>
         <tr>
-          <td>Profesor</td>
-          <td id="selProfesor"><input class="vacio" type="text" name="" value="" id="profesor"></td>
+          <td></td>
+          <td colspan="2">
+            <table id="tblEstudiantesClase"></table>
+          </td>
+          <td></td>
         </tr>
       </table>
       <p id="acciones"></p>      
     </div>
-    <script src="clase.js"></script>
+    <script type="module" src="clase.js"></script>
   </body>  
 </html>

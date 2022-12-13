@@ -26,8 +26,8 @@ export class EscuelaController {
     private eliminar(@Param('id') id : number) : Escuela[] | any {
         return this.escuelaService.delete(id);        
     }
-    @Put()
-    private actualizar(@Body() datos : any) : Escuela[] | any {
-        return this.escuelaService.update(datos)
+    @Put(':id')
+    private actualizar(@Param('id') id : number, @Body() datos : any) : Escuela[] | any {
+        return this.escuelaService.update(id, datos)
     }
 }

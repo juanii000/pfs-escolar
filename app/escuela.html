@@ -14,20 +14,27 @@
     <div id="dContenido">
       <table>
         <tr>
+          <td>Codigo</td>
           <td>Nombre</td>
-          <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
-        </tr>
-        <tr>
           <td>Domicilio</td>
-          <td><input class="vacio texto" type="text" name="" value="" id="domicilio"></td>
+          <td>Ciudad</td>
         </tr>
         <tr>
-          <td>Ciudad</td>
+          <td><input class="vacio codigo bloqueado" type="text" name="" value="" id="codigo"></td>
+          <td><input class="vacio texto" type="text" name="" value="" id="nombre"></td>
+          <td><input class="vacio texto" type="text" name="" value="" id="domicilio"></td>
           <td id="selCiudad"><input class="vacio" type="text" name="" value="" id="ciudad"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td colspan="2">
+            <table id="tblClases"></table>            
+          </td>
+          <td></td>
         </tr>
       </table>
       <p id="acciones"></p>      
     </div>
-    <script src="escuela.js"></script>
+    <script type="module" src="escuela.js"></script>
   </body>  
 </html>

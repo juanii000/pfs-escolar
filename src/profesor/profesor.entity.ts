@@ -1,4 +1,5 @@
-import { Entity, PrimaryColumn, Column } from "typeorm";
+import { Clase } from "src/clase/clase.entity";
+import { Entity, PrimaryColumn, Column, JoinColumn, OneToMany } from "typeorm";
 
 @Entity('profesores')
 export class Profesor {
@@ -6,6 +7,10 @@ export class Profesor {
     private idProfesor : number;
     @Column()
     private apellidoNombres : string;
+    
+    @OneToMany(type => Clase, clase => clase.profesor)
+    @JoinColumn()
+    public clases : Clase[];
 
     constructor (id : number, apellidoNombres : string) {
         this.idProfesor = id;

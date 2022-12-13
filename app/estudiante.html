@@ -14,16 +14,25 @@
     <div id="dContenido">
       <table>        
         <tr>
+          <td>Codigo</td>
           <td>Apellido y Nombres</td>
-          <td><input class="vacio texto" type="text" name="" value="" id="apellidoNombres"></td>
+          <td>Fecha Nacimiento</td>
         </tr>
         <tr>
-          <td>Fecha Nacimiento</td>
+          <td><input class="vacio codigo bloqueado" type="text" name="" value="" id="codigo"></td>
+          <td><input class="vacio texto" type="text" name="" value="" id="apellidoNombres"></td>
           <td><input class="vacio fecha" type="text" name="" value="" id="fechaNacimiento"></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <table id="tblClases"></table>
+          </td>
+          <td></td>
         </tr>
       </table>        
       <p id="acciones"></p>      
     </div>
-    <script src="estudiante.js"></script>
+    <script type="module" src="estudiante.js"></script>
   </body>  
 </html>

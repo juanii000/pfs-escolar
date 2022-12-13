@@ -1,15 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, FindOptionsWhere, FindManyOptions } from 'typeorm';
 import { ClaseDTO } from './clase.dto';
 import { Clase } from './clase.entity';
+import { Estudiante } from 'src/estudiante/estudiante.entity';
 
 @Injectable()
 export class ClaseService {
     private clases : Clase[] = [];
     
-    constructor (@InjectRepository(Clase)
-    private readonly claseRepository : Repository<Clase>) {}
+    constructor (@InjectRepository(Clase) private readonly claseRepository : Repository<Clase>,                 
+                 @InjectRepository(Estudiante) private readonly estudiantesRepository : Repository<Estudiante>) {}
  
     public async getAllRaw() : Promise<Clase[]> {
         try {
@@ -51,11 +52,37 @@ export class ClaseService {
             }, HttpStatus.NOT_FOUND);
         }
     }
+    public async getByIdCompleto(id : number) : Promise<any> {
+        try {
+            let clases = [];            
+            const criterio : FindOneOptions = { relations: [ 'estudiantes' ], where: { idClase: id } }
+            let clase : any = await this.claseRepository.findOne( criterio );
+            if (clase) {
+                clases.push(clase);
+            }
+            else
+                throw new Error('La clase no se encuentra.');
+            return clases;
+        } catch (error) {
+            throw new HttpException( {
+                status : HttpStatus.NOT_FOUND, error : 'Error en la busqueda de clase ' + id + ' : ' + error 
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
     public async add(datos : ClaseDTO) : Promise<string> {
         try {
+            let clase : Clase;
             if (datos)
-                if (datos.nombre && datos.idEscuela && datos.idProfesor) 
-                    await this.claseRepository.save(new Clase(datos.nombre, datos.idEscuela, datos.idProfesor));
+                if (datos.nombre && datos.escuela && datos.profesor) {
+                    clase = await this.claseRepository.save(new Clase(datos.nombre, datos.escuela, datos.profesor));
+                    if (datos.estudiantes) {
+                        // for (let i = 0; i < datos.estudiantes.length; i++) {
+                        //     await this.estudiantesClaseRepository.save(
+                        //         new EstudiantesClase(clase.getIdClase(), datos.estudiantes[i].getIdEstudiante())
+                        //         );
+                        // }
+                    }
+                }
                 else
                     throw new Error('Los datos para crear clase no son validos');
             else
@@ -82,13 +109,13 @@ export class ClaseService {
     public async update(id: number, datos : ClaseDTO) : Promise<string> {
         try {
             if (datos)
-                if (id && datos.nombre && datos.idEscuela && datos.idProfesor) 
+                if (id && datos.nombre && datos.escuela && datos.profesor) 
                     if (await this.existeClase(id)) {
                         let criterio : FindOneOptions = { where: { idClase: id } }
                         let clase : Clase = await this.claseRepository.findOne( criterio );
                         clase.setNombre(datos.nombre); 
-                        clase.setIdEscuela(datos.idEscuela); 
-                        clase.setIdProfesor(datos.idProfesor); 
+                        clase.setEscuela(datos.escuela); 
+                        clase.setProfesor(datos.profesor); 
                         await this.claseRepository.save(clase);
                     } else
                         throw new Error('La clase no se encuentra.')                    

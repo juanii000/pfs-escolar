@@ -1,3 +1,5 @@
+import { aServidor } from "./funciones.js";
+
 let parametros = [];
 function procesarParametros() {
     parametros = [];
@@ -18,24 +20,35 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        estudiantes = [];
+        let estudiantes = [];
         procesarParametros();
         let url = `/estudiante/${parametros['idEstudiante']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
             let estudiante = await respuesta.json();
-            // document.querySelector('#idEstudiante').value = estudiante['idEstudiante'];
-            document.querySelector("#pTitulo").innerHTML = `Estudiante - ${estudiante[0]['idEstudiante']}`;
-            document.querySelector('#apellidoNombres').value = estudiante[0]['apellidoNombres'];
-            document.querySelector('#fechaNacimiento').value = estudiante[0]['fechaNacimiento'].substr(0,10);
+            estudiante = estudiante[0];  //PORQUE SIEMPRE DEVUELVO UN ARRAY AUNQUE SEA UN SOLO REGISTRO
+            document.querySelector("#codigo").value = estudiante.idEstudiante;
+            document.querySelector('#apellidoNombres').value = estudiante.apellidoNombres;
+            document.querySelector('#fechaNacimiento').value = estudiante.fechaNacimiento.substr(0,10);
+            if (estudiante.clases) {
+                let html = '';
+                estudiante.clases.forEach(e => {
+                    html += `
+    <tr>
+        <td>${e.idClase} - ${e.nombre}</td>
+    </tr>
+                `; 
+                });
+                document.querySelector('#tblClases').innerHTML = html;
+            }
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelEstudiante" idEstudiante="${estudiante[0]['idEstudiante']}">Borrar</button>
-            <button class="btnUpdEstudiante" idEstudiante="${estudiante[0]['idEstudiante']}">Actualizar</button>
+            <button class="btnDelEstudiante" idEstudiante="${estudiante.idEstudiante}">Borrar</button>
+            <button class="btnUpdEstudiante" idEstudiante="${estudiante.idEstudiante}">Actualizar</button>
             `;
             let btnBorrar = document.querySelector('.btnDelEstudiante');
             btnBorrar.addEventListener('click', async () => {
                 let idEstudiante = this.getAttribute('idEstudiante');
-                if (await aServidor(idEstudiante,'D')) {
+                if (await aServidor('estudiante', idEstudiante, null, 'D')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./estudiantes.html">Regresar</a>
                     `;
@@ -49,7 +62,7 @@ async function load() {
                     "apellidoNombres" : document.querySelector('#apellidoNombres').value,
                     "fechaNacimiento" : document.querySelector('#fechaNacimiento').value
                 }        
-                if (await aServidor(renglon,'U')) {
+                if (await aServidor('estudiante', idEstudiante, renglon,'U')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./estudiantes.html">Regresar</a>
                     `;
@@ -61,25 +74,4 @@ async function load() {
     } catch (error) {
         document.querySelector("#pTitulo").innerHTML = `ERROR - Fallo en Conexion`;    
     }
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/estudiante/${datos}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/estudiante`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
 }

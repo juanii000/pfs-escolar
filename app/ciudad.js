@@ -1,3 +1,5 @@
+import { aServidor } from './funciones.js'
+
 let parametros = [];
 function procesarParametros() {
     parametros = [];
@@ -18,23 +20,34 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        ciudades = [];
+        let ciudades = [];
         procesarParametros();
         let url = `/ciudad/${parametros['idCiudad']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
             let ciudad = await respuesta.json();
-            // document.querySelector('#idCiudad').value = ciudad['idCiudad'];
-            document.querySelector("#pTitulo").innerHTML = `Ciudad - ${ciudad[0]['idCiudad']}`;
-            document.querySelector('#nombre').value = ciudad[0]['nombre'];
+            ciudad = ciudad[0]; //PORQUE SIEMPRE DEVUELVO UN ARRAY AUNQUE SEA UN SOLO REGISTRO
+            document.querySelector("#codigo").value = ciudad.idCiudad;
+            document.querySelector('#nombre').value = ciudad.nombre;
+            if (ciudad.escuelas) {
+                let html = '';
+                ciudad.escuelas.forEach(e => {
+                    html += `
+    <tr>
+        <td>${e.idEscuela} - ${e.nombre}</td>
+    </tr>
+                `; 
+                });
+                document.querySelector('#tblEscuelas').innerHTML = html;
+            }
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelCiudad" idCiudad="${ciudad[0]['idCiudad']}">Borrar</button>
-            <button class="btnUpdCiudad" idCiudad="${ciudad[0]['idCiudad']}">Actualizar</button>
+            <button class="btnDelCiudad" idCiudad="${ciudad.idCiudad}">Borrar</button>
+            <button class="btnUpdCiudad" idCiudad="${ciudad.idCiudad}">Actualizar</button>
             `;
             let btnBorrar = document.querySelector('.btnDelCiudad');
             btnBorrar.addEventListener('click', async () => {
                 let idCiudad = this.getAttribute('idCiudad');
-                if (await aServidor(idCiudad,'D')) {
+                if (await aServidor('ciudad', idCiudad, null, 'D')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./ciudades.html">Regresar</a>
                     `;
@@ -47,7 +60,7 @@ async function load() {
                     "idCiudad" : idCiudad,
                     "nombre" : document.querySelector('#nombre').value,
                 }        
-                if (await aServidor(renglon,'U')) {
+                if (await aServidor('ciudad', idCiudad, renglon, 'U')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./ciudades.html">Regresar</a>
                     `;
@@ -59,25 +72,4 @@ async function load() {
     } catch (error) {
         document.querySelector("#pTitulo").innerHTML = `ERROR - Fallo en Conexion`;    
     }
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/ciudad/${datos}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/ciudad`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
 }

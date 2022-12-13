@@ -7,8 +7,7 @@ import { Estudiante } from './estudiante.entity';
 export class EstudianteService {
     private estudiantes : Estudiante[] = [];
     
-    constructor (@InjectRepository(Estudiante)
-    private readonly estudianteRepository : Repository<Estudiante>) {}
+    constructor (@InjectRepository(Estudiante) private readonly estudianteRepository : Repository<Estudiante>) {}
  
     public async getAllRaw() : Promise<Estudiante[]> {
         try {

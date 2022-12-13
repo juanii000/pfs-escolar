@@ -1,30 +1,45 @@
+import { armarReferencia, aServidor } from "./funciones.js";
+
 let btnAgregar = document.querySelector("#btnAgregar");
 let btnBuscar = document.querySelector("#btnBuscar");
 let btnRegresar = document.querySelector("#btnRegresar");
+let btnAgrEstudiantes = document.querySelector("#btnAgrEstudiantes");
 
-armarReferencia("#selEscuela","escuela", 'idEscuela', 'idEscuela', 'nombre', 0);
-armarReferencia("#selProfesor","profesor", 'idProfesor', 'idProfesor', 'apellidoNombres', 0);
+armarReferencia('#selEscuela', 'escuela', 'idEscuela', 'idEscuela', 'nombre', 0);
+armarReferencia('#selProfesor', 'profesor', 'idProfesor', 'idProfesor', 'apellidoNombres', 0);
 
 let clases = [];
 load();
 
 btnAgregar.addEventListener("click", async () => {
     console.log("Función Agregar");
+    let estudiantes = [];
+    let estudiante;
     let nombre = document.querySelector('#nombre').value;
     let escuela = document.querySelector('#idEscuela').value;
     let profesor = document.querySelector('#idProfesor').value;
+    if (document.querySelector('#tblEstudiantesClase').hasChildNodes) {
+        if (document.querySelector('#tblEstudiantes').hasChildNodes) {
+            let datosEstudiantes = document.querySelector("#tblEstudiantes").childNodes;
+            for (i=1; i<datosEstudiantes.length; i++) {
+                estudiante = datosEstudiantes[i].firstChild.innerHTML;
+                estudiantes.push(estudiante.substring(0,estudiante.indexOf(' - ')));
+            }
+        }
+    }
     let renglon = {
         "nombre" : nombre,
         "idEscuela" : escuela,
-        "idProfesor" : profesor
+        "idProfesor" : profesor,
+        "estudiantes" : estudiantes
     };
-    console.log(renglon);
-    if (await aServidor(null, renglon,'A')) {
+    if (await aServidor('clase', null, renglon, 'A')) {
         load();
     }
     document.querySelector('#nombre').value="";
     document.querySelector('#idEscuela').value="";
     document.querySelector('#idProfesor').value="";
+    document.querySelector('#tblEstudiantesClase').innerHTML="";
 });
 btnBuscar.addEventListener("click", () => {
     console.log("Función Buscar");
@@ -37,6 +52,26 @@ btnBuscar.addEventListener("click", () => {
 })
 btnRegresar.addEventListener("click", () => {
     window.location='./index.html';
+});
+btnAgrEstudiantes.addEventListener("click", async () => {
+    let tabla = document.createElement("table");
+    tabla.id = "tblEstudiantes";
+    let fila = document.createElement("thead");
+    let celda = document.createElement("td");   
+    celda.innerHTML = `${await armarReferencia(null, 'estudiante', `selEstudiante`, 'idEstudiante', 'apellidoNombres', 0)}`;
+    fila.appendChild(celda);
+    tabla.appendChild(fila);
+    document.querySelector("#tblEstudiantesClase").appendChild(tabla);
+    document.querySelector(`#selEstudiante`).addEventListener("change", async () => {
+        let tabla = document.querySelector("#tblEstudiantes");
+        let fila = document.createElement("tr");
+        let celda = document.createElement("td");
+        let seleccion = document.querySelector('#selEstudiante');
+        celda.innerHTML = `${seleccion.value} - ${seleccion.selectedOptions[0].innerHTML}`;
+        fila.appendChild(celda);
+        tabla.appendChild(fila);
+        seleccion.value=0;    
+    });    
 });
 
 async function mostrarClases() {
@@ -53,14 +88,12 @@ async function mostrarClases() {
             </td>
             </tr>
         `; 
-        // <td><input class="vacio" type="text" name="" value="${r.idEscuela}" id="esc${r.idClase}"></td>
-        // <td><input class="vacio" type="text" name="" value="${r.idProfesor}" id="pro${r.idClase}"></td>
 }
     document.querySelector("#tblClases").innerHTML = html;
     let btnBorrar = document.querySelectorAll('.btnDelEscuela');
     btnBorrar.forEach(bd => { bd.addEventListener('click', async () => {
         let codigo = bd.getAttribute('codigo');
-        if (await aServidor(codigo, null,'D')) {
+        if (await aServidor('clase', codigo, null, 'D')) {
             load();
         }    
     })})
@@ -72,7 +105,7 @@ async function mostrarClases() {
             "idEscuela" : document.querySelector(`#esc${codigo}`).value,
             "idProfesor" : document.querySelector(`#pro${codigo}`).value
         };
-        if (await aServidor(codigo, renglon,'U')) {
+        if (await aServidor('clase', codigo, renglon, 'U')) {
             load();
         }    
     })})
@@ -90,56 +123,4 @@ async function load(codigo) {
         clases = await respuesta.json();
     }
     mostrarClases()
-}
-
-async function aServidor(id, datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'A': {     //ALTA
-            respuesta = await fetch('/clase', {
-                method :'POST',
-                headers: { 'Content-Type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        } 
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/clase/${id}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/clase/${id}`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
-}
-
-async function armarReferencia(campo, tabla, id, codi, desc, valor) {
-    let url = `./${tabla}`;
-    let datos = [];
-    let opciones = "";
-    let respuesta = await fetch(url);
-    if (respuesta.ok) {
-        datos = await respuesta.json();
-    }
-    let cabeSelect = `<select name="" id="${(id?id:"")}">`;
-    opciones += `
-  <option value="0"${(valor==0?" selected":"")}></option>`;
-    for (let r of datos) {
-        opciones += `
-  <option value="${r[codi]}"${(valor==r[codi]?" selected":"")}>${r[desc]}</option>`;
-    }
-    let pieSelect = `
-</select>`;
-    if (campo)
-        document.querySelector(campo).innerHTML = cabeSelect + opciones + pieSelect;
-    else
-        return cabeSelect + opciones + pieSelect;
 }

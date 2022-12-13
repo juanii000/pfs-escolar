@@ -1,3 +1,5 @@
+import { aServidor } from "./funciones.js";
+
 let btnAgregar = document.querySelector("#btnAgregar");
 let btnBuscar = document.querySelector("#btnBuscar");
 let btnRegresar = document.querySelector("#btnRegresar");
@@ -16,7 +18,7 @@ btnAgregar.addEventListener("click", async () => {
         "fechaNacimiento" : fechaNacimiento
     };
     console.log(renglon);
-    if (await aServidor(renglon,'A')) {
+    if (await aServidor('estudiante', codigo, renglon, 'A')) {
         load();
     }
     document.querySelector('#codigo').value="";
@@ -59,7 +61,7 @@ function mostrarEstudiantes() {
             "apellidoNombres" : document.querySelector(`#nom${codigo}`).value,
             "fechaNacimiento" : document.querySelector(`#fna${codigo}`).value
         };
-        if (await aServidor(renglon,'D')) {
+        if (await aServidor('estudiante', codigo, renglon, 'D')) {
             load();
         }    
     })})
@@ -71,7 +73,7 @@ function mostrarEstudiantes() {
             "apellidoNombres" : document.querySelector(`#nom${codigo}`).value,
             "fechaNacimiento" : document.querySelector(`#fna${codigo}`).value
         };
-        if (await aServidor(renglon,'U')) {
+        if (await aServidor('estudiante', codigo, renglon, 'U')) {
             load();
         }    
     })})
@@ -89,33 +91,4 @@ async function load(codigo) {
         estudiantes = await respuesta.json();
     }
     mostrarEstudiantes()
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'A': {     //ALTA
-            respuesta = await fetch('/estudiante', {
-                method :'POST',
-                headers: { 'Content-Type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        } 
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/estudiante/${datos.idEstudiante}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/estudiante`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
 }

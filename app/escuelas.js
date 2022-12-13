@@ -1,3 +1,5 @@
+import { armarReferencia, aServidor } from "./funciones.js";
+
 let btnAgregar = document.querySelector("#btnAgregar");
 let btnBuscar = document.querySelector("#btnBuscar");
 let btnRegresar = document.querySelector("#btnRegresar");
@@ -20,7 +22,7 @@ btnAgregar.addEventListener("click", async () => {
         "idCiudad" : ciudad
     };
     console.log(renglon);
-    if (await aServidor(renglon,'A')) {
+    if (await aServidor('escuela', codigo, renglon, 'A')) {
         load();
     }
     document.querySelector('#codigo').value="";
@@ -49,25 +51,18 @@ async function mostrarEscuelas() {
             <td><a href="./escuela.html?idEscuela=${r.idEscuela}">${r.idEscuela}</a></td>
             <td><input class="vacio texto" type="text" name="" value="${r.nombre}" id="nom${r.idEscuela}"></td>
             <td><input class="vacio texto" type="text" name="" value="${r.domicilio}" id="dom${r.idEscuela}"></td>
-            <td>${await armarReferencia(null, 'ciudad', 'ciu'+r.idEscuela, 'idCiudad', 'nombre', r.idCiudad)}</td>
+            <td>${await armarReferencia(null, 'ciudad', 'ciu'+r.idEscuela, 'idCiudad', 'nombre', r.ciudad.idCiudad)}</td>
             <td><button class="btnDelEscuela" codigo="${r.idEscuela}">Borrar</button>
                 <button class="btnUpdEscuela" codigo="${r.idEscuela}">Actualizar</button>
             </td>
             </tr>
         `; 
-        // <td><input class="vacio" type="text" name="" value="${r.idCiudad}" id="ciu${r.idEscuela}"></td>
     }
     document.querySelector("#tblEscuelas").innerHTML = html;
     let btnBorrar = document.querySelectorAll('.btnDelEscuela');
     btnBorrar.forEach(bd => { bd.addEventListener('click', async () => {
         let codigo = bd.getAttribute('codigo');
-        let renglon = {
-            "idEscuela" : codigo,
-            "nombre" : document.querySelector(`#nom${codigo}`).value,
-            "domicilio" : document.querySelector(`#dom${codigo}`).value,
-            "idCiudad" : document.querySelector(`#ciu${codigo}`).value
-        };
-        if (await aServidor(renglon,'D')) {
+        if (await aServidor('escuela', codigo, null, 'D')) {
             load();
         }    
     })})
@@ -78,9 +73,9 @@ async function mostrarEscuelas() {
             "idEscuela" : codigo,
             "nombre" : document.querySelector(`#nom${codigo}`).value,
             "domicilio" : document.querySelector(`#dom${codigo}`).value,
-            "idCiudad" : document.querySelector(`#ciu${codigo}`).value
+            "ciudad" : { "idCiudad": document.querySelector(`#ciu${codigo}`).value, "nombre" : "" }
         };
-        if (await aServidor(renglon,'U')) {
+        if (await aServidor('escuela', codigo, renglon, 'U')) {
             load();
         }    
     })})
@@ -98,56 +93,4 @@ async function load(codigo) {
         escuelas = await respuesta.json();
     }
     mostrarEscuelas()
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'A': {     //ALTA
-            respuesta = await fetch('/escuela', {
-                method :'POST',
-                headers: { 'Content-Type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        } 
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/escuela/${datos.idEscuela}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/escuela`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
-}
-
-async function armarReferencia(campo, tabla, id, codi, desc, valor) {
-    let url = `./${tabla}`;
-    let datos = [];
-    let opciones = "";
-    let respuesta = await fetch(url);
-    if (respuesta.ok) {
-        datos = await respuesta.json();
-    }
-    let cabeSelect = `<select name="" id="${(id?id:"")}">`;
-    opciones += `
-  <option value="0"${(valor==0?" selected":"")}></option>`;
-    for (let r of datos) {
-        opciones += `
-  <option value="${r[codi]}"${(valor==r[codi]?" selected":"")}>${r[desc]}</option>`;
-    }
-    let pieSelect = `
-</select>`;
-    if (campo)
-        document.querySelector(campo).innerHTML = cabeSelect + opciones + pieSelect;
-    else
-        return cabeSelect + opciones + pieSelect;
 }

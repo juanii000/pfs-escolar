@@ -7,8 +7,7 @@ import { Profesor } from './profesor.entity';
 export class ProfesorService {
     private profesores : Profesor[] = [];
     
-    constructor (@InjectRepository(Profesor)
-    private readonly profesorRepository : Repository<Profesor>) {}
+    constructor (@InjectRepository(Profesor) private readonly profesorRepository : Repository<Profesor>) {}
     
     public async getAllRaw() : Promise<Profesor[]> {
         try {
@@ -36,7 +35,7 @@ export class ProfesorService {
     }
     public async getById(id : number) : Promise<Profesor[]> {
         try {
-            const criterio : FindOneOptions = { where: { idProfesor: id } }
+            const criterio : FindOneOptions = { relations: [ 'clases' ], where: { idProfesor: id } }
             let profesor : Profesor = await this.profesorRepository.findOne( criterio );
             this.profesores = [];
             if (profesor) 

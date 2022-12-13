@@ -1,3 +1,5 @@
+import { aServidor } from "./funciones.js";
+
 let parametros = [];
 function procesarParametros() {
     parametros = [];
@@ -18,23 +20,34 @@ load();
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 async function load() {
     try {
-        profesores = [];
+        let profesores = [];
         procesarParametros();
         let url = `/profesor/${parametros['idProfesor']}`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
             let profesor = await respuesta.json();
-            // document.querySelector('#idProfesor').value = profesor['idProfesor'];
-            document.querySelector("#pTitulo").innerHTML = `Profesor - ${profesor[0]['idProfesor']}`;
-            document.querySelector('#apellidoNombres').value = profesor[0]['apellidoNombres'];
+            profesor = profesor[0]; //PORQUE SIEMPRE DEVUELVO UN ARRAY AUNQUE SEA UN SOLO REGISTRO
+            document.querySelector("#codigo").value = profesor.idProfesor;
+            document.querySelector('#apellidoNombres').value = profesor.apellidoNombres;
+            if (profesor.clases) {
+                let html = '';
+                profesor.clases.forEach(e => {
+                    html += `
+    <tr>
+        <td>${e.idClase} - ${e.nombre}</td>
+    </tr>
+                `; 
+                });
+                document.querySelector('#tblClases').innerHTML = html;
+            }
             document.querySelector('#acciones').innerHTML = `
-            <button class="btnDelProfesor" idProfesor="${profesor[0]['idProfesor']}">Borrar</button>
-            <button class="btnUpdProfesor" idProfesor="${profesor[0]['idProfesor']}">Actualizar</button>
+            <button class="btnDelProfesor" idProfesor="${profesor.idProfesor}">Borrar</button>
+            <button class="btnUpdProfesor" idProfesor="${profesor.idProfesor}">Actualizar</button>
             `;
             let btnBorrar = document.querySelector('.btnDelProfesor');
             btnBorrar.addEventListener('click', async () => {
                 let idProfesor = this.getAttribute('idProfesor');
-                if (await aServidor(idProfesor,'D')) {
+                if (await aServidor('profesor', idProfesor,  null, 'D')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./profesores.html">Regresar</a>
                     `;
@@ -47,7 +60,7 @@ async function load() {
                     "idProfesor" : idProfesor,
                     "apellidoNombres" : document.querySelector('#apellidoNombres').value,
                 }        
-                if (await aServidor(renglon,'U')) {
+                if (await aServidor('profesor', idProfesor, renglon, 'U')) {
                     document.querySelector('#acciones').innerHTML=`
                 <a href="./profesores.html">Regresar</a>
                     `;
@@ -59,25 +72,4 @@ async function load() {
     } catch (error) {
         document.querySelector("#pTitulo").innerHTML = `ERROR - Fallo en Conexion`;    
     }
-}
-
-async function aServidor(datos, accion) {
-    let respuesta;
-    switch (accion) {
-        case 'D' : {    //ELIMINACION
-            respuesta = await fetch(`/profesor/${datos}`, {
-                method : 'DELETE'
-            });   
-            break;         
-        }
-        case 'U': {     //ACTUALIZACION
-            respuesta = await fetch(`/profesor`, {
-                method : 'PUT',
-                headers : { 'Content-type' : 'application/json' },
-                body : JSON.stringify(datos)
-            });
-            break;
-        }
-    }
-    return ((await respuesta.text()) == "ok");
 }

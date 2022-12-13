@@ -11,6 +11,10 @@ export class ClaseController {
     private listarRaw() : Clase[] | any {
         return this.claseService.getAllRaw();
     }
+    @Get(':id/estudiantes')
+    private listarUnaCompleta(@Param('id') id : number) : Clase[] | any {
+        return this.claseService.getByIdCompleto(id);
+    }    
     @Get(':id')
     private listarUna(@Param('id') id : number) : Clase[] | any {
         return this.claseService.getById(id);
