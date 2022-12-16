@@ -20,7 +20,7 @@ import { LoginModule } from './login/login.module';
       host: 'localhost',
       port: 3306,
       username: 'root',
-      password: 'mauri',
+      password: '*****',
       database: 'escolar',
       entities: [        
         "dist/**/**.entity{.ts,.js}"
