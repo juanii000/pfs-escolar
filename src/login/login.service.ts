@@ -62,44 +62,4 @@ export class LoginService {
             return error.message;            
         }       
     }
-    public async delete(id : string) : Promise<string> {
-        try {
-            if (id)
-                if (await this.existeLogin(id)) {
-                    await this.loginRepository.delete( id );
-                } else
-                    throw new Error('El usuario no se encuentra.')
-            else
-                throw new Error('No hay datos para eliminar usuarios');
-            return "ok";
-            } catch (error) {
-                return error.message;            
-        }
-    }
-    public async update(datos : LoginDTO) : Promise<string> {
-        try {
-            if (datos)
-                if (datos.usuario && datos.palabra) 
-                    if (await this.existeLogin(datos.usuario)) {
-                        let criterio : FindOneOptions = { where: { usuario: datos.usuario } }
-                        let login : Login = await this.loginRepository.findOne( criterio );
-                        login.setPalabra(datos.palabra); 
-                        await this.loginRepository.save(login);
-                    } else
-                        throw new Error('El usuario no se encuentra.')                    
-                else
-                    throw new Error('Los datos para modificar usuario no son validos');
-            else
-                throw new Error('No hay datos para modificar usuarios');
-            return "ok";
-        } catch (error) {
-            return error.message;            
-        }
-    }
-/////
-    private async existeLogin(id : string) : Promise<boolean> {
-        let criterio : FindOneOptions = { where: { usuario: id } };
-        let login : Login = await this.loginRepository.findOne( criterio );
-        return (login != null);
-    }
 }

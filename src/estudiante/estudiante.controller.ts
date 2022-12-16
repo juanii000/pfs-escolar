@@ -4,30 +4,34 @@ import { EstudianteService } from './estudiante.service';
 
 @Controller('estudiante')
 export class EstudianteController {
-    constructor(private escuelaService : EstudianteService) {}
+    constructor(private estudianteService : EstudianteService) {}
 
     @Get('/raw')
     private listarRaw() : Estudiante[] | any {
-        return this.escuelaService.getAllRaw();
+        return this.estudianteService.getAllRaw();
     }
+    @Get(':id/clases')
+    private listarUnaCompleta(@Param('id') id : number) : Estudiante[] | any {
+        return this.estudianteService.getByIdCompleto(id);
+    }    
     @Get(':id')
     private listarUna(@Param('id') id : number) : Estudiante[] | any {
-        return this.escuelaService.getById(id);
+        return this.estudianteService.getById(id);
     }    
     @Get()
     private listarTodas() : Estudiante[] | any {
-        return this.escuelaService.getAll();
+        return this.estudianteService.getAll();
     }
     @Post()    
     private agregar(@Body() datos : any) : Estudiante[] | any {
-        return this.escuelaService.add(datos);
+        return this.estudianteService.add(datos);
     }
     @Delete(':id')
     private eliminar(@Param('id') id : number) : Estudiante[] | any {
-        return this.escuelaService.delete(id);        
+        return this.estudianteService.delete(id);        
     }
-    @Put()
-    private actualizar(@Body() datos : any) : Estudiante[] | any {
-        return this.escuelaService.update(datos)
+    @Put(':id')
+    private actualizar(@Param('id') id : number, @Body() datos : any) : Estudiante[] | any {
+        return this.estudianteService.update(id, datos)
     }
 }

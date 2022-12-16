@@ -22,7 +22,7 @@ async function load() {
     try {
         let estudiantes = [];
         procesarParametros();
-        let url = `/estudiante/${parametros['idEstudiante']}`;
+        let url = `/estudiante/${parametros['idEstudiante']}/clases`;
         let respuesta = await fetch(url);
         if (respuesta.ok) {
             let estudiante = await respuesta.json();

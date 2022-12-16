@@ -81,12 +81,12 @@ export class ProfesorService {
                 return error.message;            
         }
     }
-    public async update(datos : any) : Promise<string> {
+    public async update(id : number, datos : any) : Promise<string> {
         try {
             if (datos)
                 if (datos.idProfesor && datos.apellidoNombres) 
-                    if (await this.existeProfesor(datos.idProfesor)) {
-                        let criterio : FindOneOptions = { where: { idProfesor: datos.idProfesor } }
+                    if (await this.existeProfesor(id)) {
+                        let criterio : FindOneOptions = { where: { idProfesor: id } }
                         let profesor : Profesor = await this.profesorRepository.findOne( criterio );
                         profesor.setApellidoNombres(datos.apellidoNombres); 
                         await this.profesorRepository.save(profesor);

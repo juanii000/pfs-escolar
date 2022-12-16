@@ -1,5 +1,5 @@
 import { Clase } from "src/clase/clase.entity";
-import { Entity, PrimaryColumn, Column, JoinTable, ManyToMany } from "typeorm";
+import { Entity, PrimaryColumn, Column, ManyToMany, JoinTable } from "typeorm";
 
 @Entity('estudiantes')
 export class Estudiante {
@@ -10,6 +10,10 @@ export class Estudiante {
     @Column()
     private fechaNacimiento : string;
 
+    @ManyToMany(type => Clase, (clase) => clase.estudiantes)
+    @JoinTable({ name: 'clases_estudiantes_estudiantes'})
+    public clases : Clase[];
+    
     constructor (id : number, apellidoNombres : string, fechaNacimiento : string) {
         this.idEstudiante = id;
         this.apellidoNombres = apellidoNombres;

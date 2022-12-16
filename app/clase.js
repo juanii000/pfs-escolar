@@ -30,8 +30,8 @@ async function load() {
             clase = clase[0];  //PORQUE SIEMPRE DEVUELVO UN ARRAY AUNQUE SEA UN SOLO REGISTRO
             document.querySelector('#codigo').value = clase.idClase;
             document.querySelector('#nombre').value = clase.nombre;
-            armarReferencia("#selEscuela","escuela", 'idEscuela', 'idEscuela', 'nombre', clase.idEscuela);
-            armarReferencia("#selProfesor","profesor", 'idProfesor', 'idProfesor', 'apellidoNombres', clase.idProfesor);
+            armarReferencia("#selEscuela","escuela", 'idEscuela', 'idEscuela', 'nombre', clase.escuela.idEscuela);
+            armarReferencia("#selProfesor","profesor", 'idProfesor', 'idProfesor', 'apellidoNombres', clase.profesor.idProfesor);
             if (clase.estudiantes) {
                 let html = '';
                 clase.estudiantes.forEach(e => {

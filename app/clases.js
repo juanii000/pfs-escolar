@@ -14,25 +14,29 @@ load();
 btnAgregar.addEventListener("click", async () => {
     console.log("Función Agregar");
     let estudiantes = [];
-    let estudiante;
+    let estudiante, idEstudiante;
     let nombre = document.querySelector('#nombre').value;
     let escuela = document.querySelector('#idEscuela').value;
     let profesor = document.querySelector('#idProfesor').value;
     if (document.querySelector('#tblEstudiantesClase').hasChildNodes) {
         if (document.querySelector('#tblEstudiantes').hasChildNodes) {
             let datosEstudiantes = document.querySelector("#tblEstudiantes").childNodes;
-            for (i=1; i<datosEstudiantes.length; i++) {
+            for (let i=1; i<datosEstudiantes.length; i++) {
                 estudiante = datosEstudiantes[i].firstChild.innerHTML;
-                estudiantes.push(estudiante.substring(0,estudiante.indexOf(' - ')));
+                idEstudiante = estudiante.substring(0,estudiante.indexOf(' - '));
+                estudiantes.push( { "idEstudiante" : idEstudiante,
+                                    "apellidoNombres" : "",
+                                    "fechaNacimiento" : "" } );
             }
         }
     }
     let renglon = {
         "nombre" : nombre,
-        "idEscuela" : escuela,
-        "idProfesor" : profesor,
+        "escuela" : { "idEscuela" : escuela, "nombre" : "", "domicilio" : "", "ciudadIdCiudad" : "" },
+        "profesor" : { "idProfesor" : profesor, "apellidoNombres" : "" },
         "estudiantes" : estudiantes
     };
+    console.log(renglon);
     if (await aServidor('clase', null, renglon, 'A')) {
         load();
     }
@@ -81,8 +85,8 @@ async function mostrarClases() {
             <tr>
             <td><a href="./clase.html?idClase=${r.idClase}">${r.idClase}</a></td>
             <td><input class="vacio texto" type="text" name="" value="${r.nombre}" id="nom${r.idClase}"></td>
-            <td>${await armarReferencia(null, 'escuela', 'esc'+r.idClase, 'idEscuela', 'nombre', r.idEscuela)}</td>
-            <td>${await armarReferencia(null, 'profesor', 'pro'+r.idClase, 'idProfesor', 'apellidoNombres', r.idProfesor)}</td>
+            <td>${await armarReferencia(null, 'escuela', 'esc'+r.idClase, 'idEscuela', 'nombre', r.escuela.idEscuela)}</td>
+            <td>${await armarReferencia(null, 'profesor', 'pro'+r.idClase, 'idProfesor', 'apellidoNombres', r.profesor.idProfesor)}</td>
             <td><button class="btnDelEscuela" codigo="${r.idClase}">Borrar</button>
                 <button class="btnUpdEscuela" codigo="${r.idClase}">Actualizar</button>
             </td>
@@ -102,8 +106,8 @@ async function mostrarClases() {
         let codigo = bd.getAttribute('codigo');
         let renglon = {
             "nombre" : document.querySelector(`#nom${codigo}`).value,
-            "idEscuela" : document.querySelector(`#esc${codigo}`).value,
-            "idProfesor" : document.querySelector(`#pro${codigo}`).value
+            "escuela" : { "idEscuela" : escuela, "nombre" : "", "domicilio" : "", "ciudadIdCiudad" : "" },
+            "profesor" : { "idProfesor" : profesor, "apellidoNombres" : "" }
         };
         if (await aServidor('clase', codigo, renglon, 'U')) {
             load();

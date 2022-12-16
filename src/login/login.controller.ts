@@ -20,12 +20,4 @@ export class LoginController {
     private validar(@Body() datos : LoginDTO) : Login[] | any {
         return this.loginService.validar(datos);
     }
-    @Delete(':id')
-    private eliminar(@Param('id') id : string) : Login[] | any {
-        return this.loginService.delete(id);        
-    }
-    @Put(':id')
-    private actualizar(@Param('id') id : string, @Body() datos : LoginDTO) : Login[] | any {
-        return this.loginService.update(datos)
-    }
 }

@@ -26,8 +26,8 @@ export class ProfesorController {
     private eliminar(@Param('id') id : number) : Profesor[] | any {
         return this.profesorService.delete(id);        
     }
-    @Put()
-    private actualizar(@Body() datos : any) : Profesor[] | any {
-        return this.profesorService.update(datos)
+    @Put(':id')
+    private actualizar(@Param('id') id : number, @Body() datos : any) : Profesor[] | any {
+        return this.profesorService.update(id, datos)
     }
 }

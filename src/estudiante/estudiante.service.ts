@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Clase } from 'src/clase/clase.entity';
 import { Repository, FindOneOptions } from 'typeorm';
 import { Estudiante } from './estudiante.entity';
 
@@ -7,7 +8,8 @@ import { Estudiante } from './estudiante.entity';
 export class EstudianteService {
     private estudiantes : Estudiante[] = [];
     
-    constructor (@InjectRepository(Estudiante) private readonly estudianteRepository : Repository<Estudiante>) {}
+    constructor (@InjectRepository(Estudiante) private readonly estudianteRepository : Repository<Estudiante>,
+                 @InjectRepository(Clase) private readonly claseRepository : Repository<Clase>) {}
  
     public async getAllRaw() : Promise<Estudiante[]> {
         try {
@@ -38,6 +40,22 @@ export class EstudianteService {
             const criterio : FindOneOptions = { where: { idEstudiante: id } }
             let estudiante : Estudiante = await this.estudianteRepository.findOne( criterio );
             this.estudiantes = [];
+            if (estudiante) 
+                this.estudiantes.push(estudiante);
+            else
+                throw new Error('La estudiante no se encuentra.')
+            return this.estudiantes;
+        } catch (error) {
+            throw new HttpException( {
+                status : HttpStatus.NOT_FOUND, error : 'Error en la busqueda de estudiante ' + id + ' : ' + error 
+            }, HttpStatus.NOT_FOUND);
+        }
+    }
+    public async getByIdCompleto(id : number) : Promise<Estudiante[]> {
+        try {
+            this.estudiantes = [];
+            const criterio : FindOneOptions = { relations: [ 'clases' ], where: { idEstudiante: id } }
+            let estudiante : Estudiante = await this.estudianteRepository.findOne( criterio );
             if (estudiante) 
                 this.estudiantes.push(estudiante);
             else
@@ -81,12 +99,12 @@ export class EstudianteService {
                 return error.message;            
         }
     }
-    public async update(datos : any) : Promise<string> {
+    public async update(id : number, datos : any) : Promise<string> {
         try {
             if (datos)
                 if (datos.idEstudiante && datos.apellidoNombres && datos.fechaNacimiento) 
-                    if (await this.existeEstudiante(datos.idEstudiante)) {
-                        let criterio : FindOneOptions = { where: { idEstudiante: datos.idEstudiante } }
+                    if (await this.existeEstudiante(id)) {
+                        let criterio : FindOneOptions = { where: { idEstudiante: id } }
                         let estudiante : Estudiante = await this.estudianteRepository.findOne( criterio );
                         estudiante.setApellidoNombres(datos.apellidoNombres);
                         estudiante.setFechaNacimiento(datos.fechaNacimiento);

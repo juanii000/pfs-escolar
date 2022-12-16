@@ -1,16 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Estudiante } from 'src/estudiante/estudiante.entity';
 import { Repository, FindOneOptions, FindOptionsWhere, FindManyOptions } from 'typeorm';
 import { ClaseDTO } from './clase.dto';
 import { Clase } from './clase.entity';
-import { Estudiante } from 'src/estudiante/estudiante.entity';
 
 @Injectable()
 export class ClaseService {
     private clases : Clase[] = [];
     
-    constructor (@InjectRepository(Clase) private readonly claseRepository : Repository<Clase>,                 
-                 @InjectRepository(Estudiante) private readonly estudiantesRepository : Repository<Estudiante>) {}
+    constructor (@InjectRepository(Clase) private readonly claseRepository : Repository<Clase>) {}
  
     public async getAllRaw() : Promise<Clase[]> {
         try {
@@ -28,7 +27,8 @@ export class ClaseService {
     }
     public async getAll() : Promise<Clase[]> {
         try {
-            this.clases = await this.claseRepository.find();        
+            const criterio : FindManyOptions = { relations: [ 'escuela' , 'profesor' ] }
+            this.clases = await this.claseRepository.find( criterio );        
             return this.clases;
         } catch (error) {
             throw new HttpException( {
@@ -38,7 +38,7 @@ export class ClaseService {
     }
     public async getById(id : number) : Promise<Clase[]> {
         try {
-            const criterio : FindOneOptions = { where: { idClase: id } }
+            const criterio : FindOneOptions = { relations: [ 'escuela' , 'profesor' ], where: { idClase: id } }
             let clase : Clase = await this.claseRepository.findOne( criterio );
             this.clases = [];
             if (clase) 
@@ -55,7 +55,7 @@ export class ClaseService {
     public async getByIdCompleto(id : number) : Promise<any> {
         try {
             let clases = [];            
-            const criterio : FindOneOptions = { relations: [ 'estudiantes' ], where: { idClase: id } }
+            const criterio : FindOneOptions = { relations: [ 'escuela' , 'profesor', 'estudiantes' ], where: { idClase: id } }
             let clase : any = await this.claseRepository.findOne( criterio );
             if (clase) {
                 clases.push(clase);
@@ -74,14 +74,26 @@ export class ClaseService {
             let clase : Clase;
             if (datos)
                 if (datos.nombre && datos.escuela && datos.profesor) {
-                    clase = await this.claseRepository.save(new Clase(datos.nombre, datos.escuela, datos.profesor));
+                    clase = new Clase(datos.nombre, datos.escuela, datos.profesor);
                     if (datos.estudiantes) {
-                        // for (let i = 0; i < datos.estudiantes.length; i++) {
-                        //     await this.estudiantesClaseRepository.save(
-                        //         new EstudiantesClase(clase.getIdClase(), datos.estudiantes[i].getIdEstudiante())
-                        //         );
-                        // }
-                    }
+                        clase.estudiantes = [];
+                        for (let i = 0; i < datos.estudiantes.length; i++) {
+                            let estudiante : Estudiante = datos.estudiantes[i];
+                            console.log(estudiante);
+                            clase.estudiantes.push(estudiante);
+                        }
+                    }                            
+                    await this.claseRepository.save(clase);
+                    // clase = await this.claseRepository.save(new Clase(datos.nombre, datos.escuela, datos.profesor));
+                    // if (datos.estudiantes) {
+                    //     for (let i = 0; i < datos.estudiantes.length; i++) {
+                    //         let estudiante : any = datos.estudiantes[i];
+                    //         console.log(estudiante);                            
+                    //         await this.claseEstudiantesRepository.save(
+                    //             new ClaseEstudiantes(clase.getIdClase(), estudiante.idEstudiante)
+                    //             );
+                    //     }
+                    // }
                 }
                 else
                     throw new Error('Los datos para crear clase no son validos');
