@@ -36,3 +36,12 @@ input.bloqueado {
 div.oculto {
     visibility: hidden;
 }
+table.bordes {
+    border: 1px solid black;
+}
+thead.bordes {
+    border: 1px solid black;
+}
+tr.bordes {
+    border: 1px solid black;
+}

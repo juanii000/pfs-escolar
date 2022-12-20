@@ -85,12 +85,12 @@ export class CiudadService {
                 return error.message;            
         }
     }
-    public async update(datos : CiudadDTO) : Promise<string> {
+    public async update(id: number, datos : CiudadDTO) : Promise<string> {
         try {
             if (datos)
-                if (datos.idCiudad && datos.nombre) 
-                    if (await this.existeCiudad(datos.idCiudad)) {
-                        let criterio : FindOneOptions = { where: { idCiudad: datos.idCiudad } }
+                if (datos.nombre) 
+                    if (await this.existeCiudad(id)) {
+                        let criterio : FindOneOptions = { where: { idCiudad: id } }
                         let ciudad : Ciudad = await this.ciudadRepository.findOne( criterio );
                         ciudad.setNombre(datos.nombre); 
                         await this.ciudadRepository.save(ciudad);

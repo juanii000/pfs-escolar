@@ -29,6 +29,6 @@ export class CiudadController {
     }
     @Put(':id')
     private actualizar(@Param('id') id : number, @Body() datos : CiudadDTO) : Ciudad[] | any {
-        return this.ciudadService.update(datos)
+        return this.ciudadService.update(id, datos)
     }
 }

@@ -1,7 +1,8 @@
 import { Escuela } from "src/escuela/escuela.entity";
-import { Estudiante } from "src/estudiante/estudiante.entity";
 import { Profesor } from "src/profesor/profesor.entity";
-import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, JoinColumn, ManyToOne } from "typeorm";
+import { Estudiante } from "src/estudiante/estudiante.entity";
+import { Asistencia } from "src/asistencia/asistencia.entity";
+import { Entity, PrimaryGeneratedColumn, Column, JoinTable, ManyToMany, JoinColumn, ManyToOne, OneToOne, OneToMany } from "typeorm";
 
 @Entity('clases')
 export class Clase {
@@ -19,6 +20,10 @@ export class Clase {
     @ManyToMany(type => Estudiante)
     @JoinTable()
     public estudiantes : Estudiante[];
+
+    @OneToMany(type => Asistencia, asistencia => asistencia.clase)
+    @JoinColumn()
+    public asistencias : Asistencia[];
 
     constructor (nombre : string, escuela : Escuela, profesor : Profesor) {
         this.nombre = nombre;

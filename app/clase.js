@@ -38,10 +38,18 @@ async function load() {
                     html += `
     <tr>
         <td>${e.idEstudiante} - ${e.apellidoNombres}</td>
+        <td><button class="btnAsistencia" idClase="${clase.idClase}" idEstudiante="${e.idEstudiante}">A</button></td>
     </tr>
                 `; 
                 });
                 document.querySelector('#tblEstudiantesClase').innerHTML = html;
+                let btnsAsistencia = document.querySelectorAll('.btnAsistencia');
+                for (let i = 0; i<btnsAsistencia.length; i++) {
+                    let b = btnsAsistencia[i];
+                    b.addEventListener("click", () => {
+                        window.location=`./asistencia.html?idClase=${b.attributes.idclase.value}&idEstudiante=${b.attributes.idestudiante.value}`;
+                    })
+                }
             }
             document.querySelector('#acciones').innerHTML = `
             <button class="btnDelClase" idClase="${clase.idClase}">Borrar</button>
