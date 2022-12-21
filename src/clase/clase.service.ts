@@ -118,6 +118,26 @@ export class ClaseService {
                 return error.message;            
         }
     }
+    public async deleteEstudiante(idC : number, idE : number) : Promise<string> {
+        try {
+            if (idC && idE) {
+                const criterio : FindOneOptions = { relations: [ 'estudiantes' ], where: { idClase: idC } }
+                let clase : Clase = await this.claseRepository.findOne( criterio );
+                if (clase) {
+                    for (let i = 0; i < clase.estudiantes.length; i++) {
+                        if (clase.estudiantes[i].getIdEstudiante() == idE)
+                            clase.estudiantes.splice(i,1);
+                    }
+                    await this.claseRepository.save( clase );
+                } else
+                    throw new Error('La clase no se encuentra.')
+            } else
+                throw new Error('No hay datos para eliminar estudiante de la clase');
+            return "ok";
+        } catch (error) {
+            return error.message;            
+        }
+    }
     public async update(id: number, datos : ClaseDTO) : Promise<string> {
         try {
             if (datos)

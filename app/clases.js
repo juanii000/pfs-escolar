@@ -58,24 +58,28 @@ btnRegresar.addEventListener("click", () => {
     window.location='./index.html';
 });
 btnAgrEstudiantes.addEventListener("click", async () => {
-    let tabla = document.createElement("table");
-    tabla.id = "tblEstudiantes";
-    let fila = document.createElement("thead");
-    let celda = document.createElement("td");   
-    celda.innerHTML = `${await armarReferencia(null, 'estudiante', `selEstudiante`, 'idEstudiante', 'apellidoNombres', 0)}`;
-    fila.appendChild(celda);
-    tabla.appendChild(fila);
-    document.querySelector("#tblEstudiantesClase").appendChild(tabla);
-    document.querySelector(`#selEstudiante`).addEventListener("change", async () => {
-        let tabla = document.querySelector("#tblEstudiantes");
-        let fila = document.createElement("tr");
-        let celda = document.createElement("td");
-        let seleccion = document.querySelector('#selEstudiante');
-        celda.innerHTML = `${seleccion.value} - ${seleccion.selectedOptions[0].innerHTML}`;
+    if (document.querySelector("#tblEstudiantesClase").hasChildNodes()) {
+        document.querySelector("#tblEstudiantesClase").innerHTML = "";
+    } else {
+        let tabla = document.createElement("table");
+        tabla.id = "tblEstudiantes";
+        let fila = document.createElement("thead");
+        let celda = document.createElement("td");   
+        celda.innerHTML = `${await armarReferencia(null, 'estudiante', `selEstudiante`, 'idEstudiante', 'apellidoNombres', 0)}`;
         fila.appendChild(celda);
         tabla.appendChild(fila);
-        seleccion.value=0;    
-    });    
+        document.querySelector("#tblEstudiantesClase").appendChild(tabla);
+        document.querySelector(`#selEstudiante`).addEventListener("change", async () => {
+            let tabla = document.querySelector("#tblEstudiantes");
+            let fila = document.createElement("tr");
+            let celda = document.createElement("td");
+            let seleccion = document.querySelector('#selEstudiante');
+            celda.innerHTML = `${seleccion.value} - ${seleccion.selectedOptions[0].innerHTML}`;
+            fila.appendChild(celda);
+            tabla.appendChild(fila);
+            seleccion.value=0;    
+        });    
+    }
 });
 
 async function mostrarClases() {

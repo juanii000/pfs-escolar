@@ -36,9 +36,10 @@ async function load() {
                 let html = '';
                 clase.estudiantes.forEach(e => {
                     html += `
-    <tr>
+    <tr id="lin${e.idEstudiante}">
         <td>${e.idEstudiante} - ${e.apellidoNombres}</td>
         <td><button class="btnAsistencia" idClase="${clase.idClase}" idEstudiante="${e.idEstudiante}">A</button></td>
+        <td><button class="btnEliminar" idClase="${clase.idClase}" idEstudiante="${e.idEstudiante}">-</button></td>
     </tr>
                 `; 
                 });
@@ -48,6 +49,15 @@ async function load() {
                     let b = btnsAsistencia[i];
                     b.addEventListener("click", () => {
                         window.location=`./asistencia.html?idClase=${b.attributes.idclase.value}&idEstudiante=${b.attributes.idestudiante.value}`;
+                    })
+                }
+                let btnsEliminar = document.querySelectorAll('.btnEliminar');
+                for (let i = 0; i<btnsEliminar.length; i++) {
+                    let b = btnsEliminar[i];
+                    b.addEventListener("click", () => {
+                        if (aServidor('clase',`${b.attributes.idclase.value}-${b.attributes.idestudiante.value}`,null,'D')) {
+                            document.querySelector(`#lin${b.attributes.idestudiante.value}`).remove();
+                        }
                     })
                 }
             }

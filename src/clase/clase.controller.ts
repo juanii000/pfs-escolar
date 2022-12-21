@@ -27,6 +27,10 @@ export class ClaseController {
     private agregar(@Body() datos : ClaseDTO) : Clase[] | any {
         return this.claseService.add(datos);
     }
+    @Delete(':idC-:idE')
+    private eliminarEstudiante(@Param('idC') idC : number, @Param('idE') idE : number) : Clase[] | any {
+        return this.claseService.deleteEstudiante(idC, idE);        
+    }
     @Delete(':id')
     private eliminar(@Param('id') id : number) : Clase[] | any {
         return this.claseService.delete(id);        
