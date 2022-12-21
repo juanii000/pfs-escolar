@@ -76,50 +76,38 @@ export class AsistenciaService {
     }
     public async add(datos : AsistenciaDTO) : Promise<string> {
         try {
-            if (datos)
-                if (datos.clase && datos.estudiante && datos.fecha) 
+            if (datos){
+                if (datos.clase && datos.estudiante && datos.fecha) {
                     await this.asistenciaRepository.save(new Asistencia(datos.clase, datos.estudiante, datos.fecha));
-                else
+                } else {
                     throw new Error('Los datos para crear asistencia no son validos');
-            else
+                }
+            } else
                 throw new Error('No hay datos para crear asistencia');
             return "ok";
         } catch (error) {
             return error.message;            
         }       
     }
-    public async delete(id : number) : Promise<string> {
+    public async delete(ids : string) : Promise<string> {
         try {
-            if (id)
-                if (await this.existeAsistencia(id)) {
-                    await this.asistenciaRepository.delete( id );
-                } else
-                    throw new Error('La asistencia no se encuentra.')
-            else
+            if (ids) {
+                let id = ids.split('.');
+                const criterio : FindManyOptions = { relations: [ 'clase', 'estudiante' ] }
+                let datos : Asistencia[] = await this.asistenciaRepository.find( criterio );
+                for (let i = 0; i < datos.length; i++) {
+                    let dato = datos[i];
+                    if (dato.clase.getIdClase() == parseInt(id[0]) && 
+                        dato.estudiante.getIdEstudiante() == parseInt(id[1]) && 
+                        dato.getFecha() == id[2]) {
+                        await this.asistenciaRepository.delete( dato.getIdAsistencia() );
+                        return "ok";
+                    }
+                }
+                throw new Error('La asistencia no se encuentra.')
+            } else {
                 throw new Error('No hay datos para eliminar asistencias');
-            return "ok";
-            } catch (error) {
-                return error.message;            
-        }
-    }
-    public async update(id : number, datos : AsistenciaDTO) : Promise<string> {
-        try {
-            if (datos)
-                if (datos.clase && datos.estudiante && datos.fecha) 
-                    if (await this.existeAsistencia(id)) {
-                        let criterio : FindOneOptions = { where: { idAsistencia: id } }
-                        let asistencia : Asistencia = await this.asistenciaRepository.findOne( criterio );
-                        asistencia.setClase(datos.clase);
-                        asistencia.setEstudiante(datos.estudiante);
-                        asistencia.setFecha(datos.fecha);
-                        await this.asistenciaRepository.save(asistencia);
-                    } else
-                        throw new Error('La asistencia no se encuentra.')                    
-                else
-                    throw new Error('Los datos para modificar asistencia no son validos');
-            else
-                throw new Error('No hay datos para modificar asistencias');
-            return "ok";
+            }
         } catch (error) {
             return error.message;            
         }

@@ -1,4 +1,4 @@
-import { aServidor } from './funciones.js'
+import { aServidor, getDoY, getFechaDoY } from './funciones.js'
 
 let parametros = [];
 function procesarParametros() {
@@ -14,12 +14,16 @@ function procesarParametros() {
 document.querySelector("#btnRegresar").addEventListener("click", () => {
     window.location=`./clase.html?idClase=${parametros['idClase']}`;
 });
+
+let ahora = new Date();
+let inicio = new Date(ahora.getFullYear(),0,0);
+
 armarCalendario()
 
 load();
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-function armarCalendario() {
+async function armarCalendario() {
     let dia = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'];
     let mes = [31,28,31,30,31,30,31,31,30,31,30,31];
     let html = `
@@ -46,6 +50,19 @@ function armarCalendario() {
     }
     html += "</ol>";
     document.querySelector('#dContenido').innerHTML = html;
+    let lDias = document.querySelectorAll("li");
+    for (let i = 0; i<lDias.length; i++) {
+        let l=lDias[i];
+        l.addEventListener("click", async () => {
+            if (l.classList.contains('asiste')) {
+                if (await eliminarAsistencia(parametros['idClase'],parametros['idEstudiante'],l.id))
+                    l.classList.toggle("asiste");
+            } else {
+                if (await agregarAsistencia(parametros['idClase'],parametros['idEstudiante'],l.id))
+                    l.classList.toggle("asiste");
+            }
+        });
+    }
 }
 async function load() {
     try {
@@ -55,8 +72,6 @@ async function load() {
         if (respuesta.ok) {
             let asistencia = await respuesta.json();            
             if (asistencia) {
-                let ahora = new Date();
-                let inicio = new Date(ahora.getFullYear(),0,0);
                 for (let i = 0; i < asistencia.length; i++) {
                     let fechaStr = asistencia[i].fecha;
                     let fecha = new Date(fechaStr.substr(0,4), parseInt(fechaStr.substr(5,2))-1, fechaStr.substr(8,2));
@@ -71,7 +86,25 @@ async function load() {
         document.querySelector("#pTitulo").innerHTML = `ERROR - Fallo en Conexion`;    
     }
 }
-
-function getDoY(fecha, ahora) {
-    return Math.floor((fecha - ahora) / 1000 / 60 / 60 / 24);
+async function eliminarAsistencia(clase, estudiante, diaStr) {
+    let fecha = getFechaDoY(inicio,parseInt(diaStr.substr(1))).substring(0,10);
+    let id = `${clase}.${estudiante}.${fecha}`;
+    console.log(id);
+    if (await aServidor('asistencia', id, null, 'D')) {
+        return true
+    }
+    return false
+}
+async function agregarAsistencia(clase, estudiante, diaStr) {
+    let fecha = getFechaDoY(inicio,parseInt(diaStr.substr(1))).substring(0,10);
+    let renglon = {
+        "fecha" : fecha,
+        "clase" : { "idClase" : clase },
+        "estudiante" : { "idEstudiante" : estudiante }
+    };
+    console.log(renglon);
+    if (await aServidor('asistencia', null, renglon, 'A')) {
+        return true
+    }
+    return false
 }

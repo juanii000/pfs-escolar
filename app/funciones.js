@@ -56,4 +56,15 @@ async function armarReferencia(campo, api, id, codi, desc, valor) {
         return cabeSelect + opciones + pieSelect;
 }
 
-export { aServidor, armarReferencia }
+function getDoY(fecha, desde) {
+    return Math.floor((fecha - desde) / 1000 / 60 / 60 / 24);
+}
+
+function getFechaDoY(desde, dias) {
+    let msDesde = Date.parse(desde);
+    let msFecha = msDesde + parseInt(dias * 1000 * 60 * 60 * 24);
+    let fecha = new Date(msFecha).toISOString();
+    return fecha;
+}
+
+export { aServidor, armarReferencia, getDoY, getFechaDoY }

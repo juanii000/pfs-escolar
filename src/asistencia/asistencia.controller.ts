@@ -28,12 +28,7 @@ export class AsistenciaController {
         return this.asistenciaService.add(datos);
     }
     @Delete(':id')
-    private eliminar(@Param('id') id : number) : Asistencia[] | any {
+    private eliminar(@Param('id') id : string) : Asistencia[] | any {
         return this.asistenciaService.delete(id);        
     }
-    @Put(':id')
-    private actualizar(@Param('id') id : number, @Body() datos : AsistenciaDTO) : Asistencia[] | any {
-        return this.asistenciaService.update(id, datos)
-    }
-
 }
