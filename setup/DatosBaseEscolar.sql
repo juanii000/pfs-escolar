@@ -1,23 +1,39 @@
-delete from clases;
-delete from escuelas;
-delete from ciudades;
-delete from estudiantes;
-delete from profesores;
-insert into ciudades select ID-110, Name from world.city where CountryCode='ARG' and District='Buenos Aires' order by Population limit 5;
-insert into estudiantes select nro_cliente, concat(apellido, ', ', nombre), makedate(2010,nro_cliente*2) from facturacion.e01_cliente where activo < 70;
-insert into profesores select nro_cliente, concat(apellido, ', ', nombre) from facturacion.e01_cliente where activo between 100 and 120;
-insert into escuelas select nro_cliente, concat('Escuela N. ',nro_cliente,' - ',apellido, ', ', nombre), direccion, 7 + floor(RAND()*5)*2
-from facturacion.e01_cliente where activo between 70 and 100 and nro_cliente<100 limit 12;
-insert into clases select DISTINCTROW 0, CONCAT(UPPER(LEFT(i.nombre,1)),LOWER(MID(i.nombre,2))), idEscuela, idProfesor
-from facturacion.e01_factura f, facturacion.e01_detalle_factura df, facturacion.e01_producto i, escuelas e, profesores p
-where f.nro_factura = df.nro_factura and df.codigo_producto = i.codigo_producto and
-i.nombre <> '' and left(i.nombre,1) in ('a','b','c','d','f','t') and i.codigo_producto = p.idProfesor and e.idEscuela = f.nro_cliente
-order by left(i.nombre,1);
-delete from clases_estudiantes_estudiantes;
-insert into clases_estudiantes_estudiantes
-select c.idClase, e.idEstudiante
-from clases c, estudiantes e
-where e.idEstudiante*rand()*10 between floor((c.escuelaidEscuela-10)/10)*10 and ceil((c.escuelaidEscuela)/10)*10
-order by 1,2;
+USE escolar;
 
-update ciudades set nombre = 'Tres Arroyos' where idCiudad=7;
+DELETE FROM clases;
+
+DELETE FROM escuelas;
+
+DELETE FROM ciudades;
+
+DELETE FROM estudiantes;
+
+DELETE FROM profesores;
+
+INSERT INTO ciudades SELECT ID-110, name FROM world.city WHERE CountryCode='ARG' AND District='Buenos Aires' ORDER BY Population LIMIT 5;
+
+INSERT INTO estudiantes SELECT nro_cliente, CONCAT(apellido, ', ', nombre), MAKEDATE(2010,nro_cliente*2) FROM facturacion.e01_cliente WHERE activo < 70 AND nro_cliente<100;
+
+INSERT INTO profesores SELECT nro_cliente, CONCAT(apellido, ', ', nombre) FROM facturacion.e01_cliente WHERE activo BETWEEN 100 AND 120;
+
+INSERT INTO escuelas SELECT nro_cliente, CONCAT('Escuela N. ',nro_cliente,' - ',apellido, ', ', nombre), direccion, 7 + FLOOR(RAND()*5)*2 
+FROM facturacion.e01_cliente WHERE activo BETWEEN 70 AND 100 AND nro_cliente<100 LIMIT 12;
+
+INSERT INTO clases SELECT DISTINCTROW 0, CONCAT(UPPER(LEFT(i.nombre,1)),LOWER(MID(i.nombre,2))), idEscuela, idProfesor
+FROM facturacion.e01_factura f, facturacion.e01_detalle_factura df, facturacion.e01_producto i, escuelas e, profesores p
+WHERE f.nro_factura=df.nro_factura AND df.codigo_producto=i.codigo_producto AND i.nombre<>'' AND LEFT(i.nombre,1) in ('a','b','c','d','f','t') AND i.codigo_producto=p.idProfesor AND e.idEscuela=f.nro_cliente
+ORDER BY LEFT(i.nombre,1);
+
+DELETE FROM clases_estudiantes_estudiantes;
+
+INSERT INTO clases_estudiantes_estudiantes SELECT c.idClase, e.idEstudiante
+FROM clases c, estudiantes e
+WHERE e.idEstudiante*RAND()*10 BETWEEN FLOOR((c.escuelaidEscuela-10)/10)*10 AND CEIL((c.escuelaidEscuela)/10)*10
+ORDER BY 1,2;
+
+INSERT INTO asistencia SELECT DISTINCTROW 0, MAKEDATE('2022',nro_factura), clasesIdClase, estudiantesIdEstudiante 
+FROM clases_estudiantes_estudiantes, facturacion.e01_factura 
+WHERE esPrimo(estudiantesIdEstudiante) AND esPrimo(nro_factura) AND nro_factura<=365 AND WEEKDAY(MAKEDATE('2022',nro_factura)) < 5
+ORDER BY 2;
+
+UPDATE ciudades SET nombre = 'Tres Arroyos' WHERE idCiudad=7;

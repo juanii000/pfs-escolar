@@ -79,3 +79,38 @@ CREATE TABLE clases_estudiantes_estudiantes (
   CONSTRAINT IDX_Clase FOREIGN KEY (clasesIdClase) REFERENCES clases (idClase) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT IDX_Estudiante FOREIGN KEY (estudiantesIdEstudiante) REFERENCES estudiantes (idEstudiante) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+--
+-- Table structure for table asistencia
+--
+DROP TABLE IF EXISTS asistencia;
+CREATE TABLE asistencia (
+  idAsistencia int NOT NULL AUTO_INCREMENT,
+  fecha varchar(255) NOT NULL,
+  claseIdClase int DEFAULT NULL,
+  estudianteIdEstudiante int DEFAULT NULL,
+  PRIMARY KEY (idAsistencia),
+  KEY IDX_Clase_Asistencia (claseIdClase),
+  KEY IDX_Estudiante_Asistencia (estudianteIdEstudiante),
+  CONSTRAINT IDX_Clase_Asistencia FOREIGN KEY (claseIdClase) REFERENCES clases (idClase) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT IDX_Estudiante_Asistencia FOREIGN KEY (estudianteIdEstudiante) REFERENCES estudiantes (idEstudiante) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
+--
+-- Funciones
+--
+DROP FUNCTION IF EXISTS esPrimo;
+DELIMITER $$
+CREATE FUNCTION esPrimo (n int)
+RETURNS BOOLEAN 
+DETERMINISTIC
+BEGIN
+DECLARE i INTEGER;
+	SET i = 2;
+	WHILE i < n DO
+		IF (n % i) = 0 then
+			RETURN false;
+		END IF;
+        SET i = i + 1;
+	END WHILE;
+RETURN true;
+END$$
+DELIMITER ;
