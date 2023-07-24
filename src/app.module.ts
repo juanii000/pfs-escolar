@@ -17,11 +17,11 @@ import { LoginModule } from './login/login.module';
     ServeStaticModule.forRoot({ rootPath: join(__dirname, '..', 'app') }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
+      host: 'bpsnut2qo4tqnnszetjg-mysql.services.clever-cloud.com',
       port: 3306,
-      username: 'root',
-      password: 'mauri',
-      database: 'escolar',
+      username: 'uaudqcs09phcq9by',
+      password: 'Abv1zRDLwSNTdS0dwD9P',
+      database: 'bpsnut2qo4tqnnszetjg',
       entities: [        
         "dist/**/**.entity{.ts,.js}"
       ],
